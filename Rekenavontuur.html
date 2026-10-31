@@ -1,0 +1,878 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Rekenavontuur</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Nunito:wght@500;700;800&display=swap">
+<style>
+/* Layout: één speelkolom in het midden; schermen wisselen op dezelfde plek, grote vingervriendelijke knoppen.
+   Bewust één licht thema: een vrolijke speelwereld die er op elk scherm hetzelfde uitziet. */
+:root{
+  --paper:#EEF5EF; --card:#FFFFFF; --ink:#22304A; --muted:#5A6A82; --line:#D5E3D9; --soft:#F6FAF7;
+  --plus:#F0603F; --min:#2B8FD6; --keer:#35A257; --deel:#8656D2; --breuk:#DC9A0E;
+  --good:#24995F; --bad:#D9472F; --gold:#F5B82E; --gold-dark:#B9800C;
+  --display:'Baloo 2','Trebuchet MS',system-ui,sans-serif;
+  --body:'Nunito','Segoe UI',system-ui,sans-serif;
+  --r:22px;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html,body{background:var(--paper)}
+body{color:var(--ink);font-family:var(--body);font-size:18px;line-height:1.45;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:12px 40px}
+.wrap{max-width:980px;margin:0 auto;display:flex;flex-direction:column;gap:20px}
+h1,h2,h3{font-family:var(--display);line-height:1.1;margin:0;text-wrap:balance}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+button:focus-visible,input:focus-visible,summary:focus-visible{outline:4px solid var(--min);outline-offset:3px;border-radius:12px}
+.btn{font-family:var(--display);font-weight:700;font-size:1.15rem;padding:12px 22px;border-radius:16px;background:var(--c,var(--ink));color:#fff;
+  box-shadow:0 5px 0 rgba(0,0,0,.18);transition:transform .08s, box-shadow .08s;display:inline-flex;align-items:center;gap:8px;justify-content:center}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 rgba(0,0,0,.18)}
+.btn.ghost{background:var(--card);color:var(--ink);border:2px solid var(--line);box-shadow:0 4px 0 var(--line)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+
+/* Topbalk */
+.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--display);font-weight:800;font-size:1.6rem;letter-spacing:-.01em}
+.logo .tiles{display:grid;grid-template-columns:repeat(2,18px);gap:3px}
+.logo .tiles span{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;color:#fff;font-size:13px;line-height:1}
+.pill{display:flex;align-items:center;gap:8px;background:var(--card);border:2px solid var(--line);border-radius:999px;padding:6px 14px 6px 8px;
+  font-family:var(--display);font-weight:800;font-size:1.3rem;font-variant-numeric:tabular-nums;position:relative}
+.coin{width:30px;height:30px;flex:none}
+.top-right{display:flex;align-items:center;gap:10px}
+.mini-av{width:52px;height:56px;border-radius:14px;overflow:hidden;border:3px solid var(--card);box-shadow:0 0 0 2px var(--line)}
+.mini-av svg{width:100%;height:100%;display:block}
+.float{position:absolute;right:6px;top:-6px;font-weight:800;color:var(--good);animation:up 1s ease-out forwards;pointer-events:none}
+@keyframes up{to{transform:translateY(-34px);opacity:0}}
+
+/* Home */
+.hello{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;background:var(--card);border-radius:var(--r);padding:18px;border:2px solid var(--line)}
+.hello .big-av{width:130px;height:143px;border-radius:20px;overflow:hidden}
+.hello .big-av svg{width:100%;height:100%;display:block}
+.hello h1{font-size:clamp(1.8rem,5vw,2.6rem)}
+.hello p{margin:4px 0 12px;color:var(--muted)}
+.name-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.name-row label{font-weight:800;font-size:.95rem;color:var(--muted)}
+.name-row input{font:inherit;font-weight:700;padding:8px 12px;border-radius:12px;border:2px solid var(--line);width:12em;max-width:100%;background:var(--soft);color:var(--ink)}
+.section-title{font-size:1.5rem}
+.themes{display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:14px}
+.theme{background:var(--card);border-radius:var(--r);border:2px solid var(--line);padding:14px;display:flex;flex-direction:column;gap:10px;position:relative;overflow:hidden}
+.theme .sym{width:64px;height:64px;border-radius:18px;background:var(--c);color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:2.3rem;line-height:1;box-shadow:0 5px 0 rgba(0,0,0,.15)}
+.theme h3{font-size:1.4rem}
+.lvl{display:flex;gap:3px;align-items:center;font-size:.85rem;font-weight:800;color:var(--muted)}
+.lvl svg{width:20px;height:20px}
+.theme .acts{display:flex;flex-direction:column;gap:8px;margin-top:auto}
+.theme .btn{font-size:1.05rem;padding:9px 14px;width:100%}
+.shop-cta{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;background:var(--ink);color:#fff;border-radius:var(--r);padding:16px 20px}
+.shop-cta h2{font-size:1.5rem}
+.shop-cta p{margin:2px 0 0;opacity:.85}
+.parents{background:var(--card);border:2px dashed var(--line);border-radius:var(--r);padding:12px 18px;font-size:.95rem}
+.parents summary{font-weight:800;cursor:pointer;color:var(--muted)}
+.table-wrap{overflow-x:auto;margin-top:10px}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums}
+th,td{text-align:left;padding:6px 10px;border-bottom:1px solid var(--line)}
+th{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+#stem-box p,#stem-box ul{margin:6px 0}
+#stem-box ul{padding-left:1.2em}
+.stem-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:8px}
+.stem-row label{font-weight:800;min-width:4em}
+.stem-row select{font:inherit;padding:6px 10px;border-radius:10px;border:2px solid var(--line);background:var(--soft);color:var(--ink);max-width:100%;min-width:0}
+.stem-row .btn{font-size:.95rem;padding:8px 14px}
+.reset-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
+.reset-row .btn{font-size:.95rem;padding:8px 14px}
+
+/* Kaart-scherm (uitleg/oefenen/klaar) */
+.panel{background:var(--card);border-radius:var(--r);border:2px solid var(--line);padding:clamp(16px,4vw,28px);display:flex;flex-direction:column;gap:18px}
+.bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bar .tag{display:inline-flex;align-items:center;gap:8px;font-family:var(--display);font-weight:800;font-size:1.2rem;color:var(--c)}
+.bar .tag i{width:30px;height:30px;border-radius:9px;background:var(--c);color:#fff;font-style:normal;display:grid;place-items:center}
+.bar .spacer{flex:1}
+.back{font-weight:800;color:var(--muted);padding:6px 10px;border-radius:12px}
+.back:hover{background:var(--soft)}
+.speak{width:52px;height:52px;border-radius:50%;background:var(--soft);border:2px solid var(--line);display:grid;place-items:center;flex:none}
+.speak svg{width:26px;height:26px}
+.step-head{display:flex;gap:14px;align-items:flex-start}
+.step-head h2{font-size:clamp(1.6rem,5vw,2.2rem);color:var(--c)}
+.step-text{font-size:1.25rem;max-width:36em;margin:6px 0 0}
+.visual{background:var(--soft);border-radius:18px;padding:18px;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:14px;min-height:120px}
+.dots{display:flex;flex-wrap:wrap;gap:10px;justify-content:center}
+.five{display:grid;grid-template-columns:repeat(5,24px);gap:6px}
+.dot{width:24px;height:24px;border-radius:50%;background:var(--d);box-shadow:inset 0 -4px 0 rgba(0,0,0,.15);position:relative}
+.dot.x{opacity:.35}
+.dot.x::before,.dot.x::after{content:"";position:absolute;left:50%;top:-3px;width:4px;height:30px;background:var(--bad);border-radius:2px;transform:translateX(-50%) rotate(45deg)}
+.dot.x::after{transform:translateX(-50%) rotate(-45deg)}
+.op{font-family:var(--display);font-weight:800;font-size:2.4rem;color:var(--muted)}
+.groups{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.grp{border:3px dashed var(--d);border-radius:16px;padding:10px;display:flex;flex-wrap:wrap;gap:6px;max-width:116px;justify-content:center;position:relative}
+.grp .dot{width:20px;height:20px}
+.eq{font-family:var(--display);font-weight:800;font-size:clamp(2rem,7vw,3rem);font-variant-numeric:tabular-nums;width:100%;text-align:center}
+.eq b{color:var(--c)}
+.line{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+.chip{min-width:46px;height:46px;border-radius:12px;background:var(--card);border:2px solid var(--line);display:grid;place-items:center;font-family:var(--display);font-weight:800;font-size:1.4rem}
+.chip.on{background:var(--c);border-color:var(--c);color:#fff}
+.chip.start{border-color:var(--c);color:var(--c)}
+.pie{max-width:100%;height:auto}
+.frac{display:inline-flex;flex-direction:column;align-items:center;line-height:1;vertical-align:middle;font-family:var(--display);font-weight:800}
+.frac span:first-child{border-bottom:3px solid currentColor;padding:0 4px 2px}
+.frac span:last-child{padding-top:2px}
+.stepper{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.pips{display:flex;gap:6px;flex:1;justify-content:center}
+.pip{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.pip.on{background:var(--c)}
+
+/* Oefenen */
+.progress{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;flex:1;min-width:140px}
+.progress span{height:12px;border-radius:6px;background:var(--line)}
+.progress span.ok{background:var(--good)}
+.progress span.half{background:var(--gold)}
+.progress span.no{background:var(--bad)}
+.progress span.now{background:var(--c)}
+.q{display:flex;gap:14px;align-items:center;justify-content:center;flex-wrap:wrap;text-align:center}
+.q .qtext{font-family:var(--display);font-weight:800;font-size:clamp(2.4rem,9vw,3.8rem);line-height:1.1;font-variant-numeric:tabular-nums}
+.q .qtext.story{font-size:clamp(1.3rem,4.5vw,1.8rem);max-width:24em}
+.q .qtext .frac{font-size:.8em}
+.answers{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.ans{font-family:var(--display);font-weight:800;font-size:clamp(1.8rem,6vw,2.4rem);min-height:84px;border-radius:20px;background:var(--card);border:3px solid var(--line);
+  box-shadow:0 6px 0 var(--line);display:grid;place-items:center;transition:transform .08s;font-variant-numeric:tabular-nums}
+.ans:hover:not([disabled]){border-color:var(--c)}
+.ans:active:not([disabled]){transform:translateY(4px);box-shadow:0 2px 0 var(--line)}
+.ans.good{background:var(--good);border-color:var(--good);color:#fff;box-shadow:0 6px 0 #187349}
+.ans.bad{background:#FBE3DE;border-color:var(--bad);color:var(--bad);box-shadow:0 6px 0 #F0B7AC;animation:shake .35s}
+.ans[disabled]{cursor:default}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.feedback{border-radius:18px;padding:14px 18px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:relative;overflow:hidden}
+.feedback.good{background:#DDF4E7}
+.feedback.try{background:#FFF2D6}
+.feedback.show{background:#E7EEF8}
+.feedback .msg{flex:1;min-width:180px}
+.feedback strong{font-family:var(--display);font-size:1.5rem;display:block;line-height:1.1}
+.hint-btn{font-weight:800;color:var(--c);text-decoration:underline;text-underline-offset:3px;padding:4px}
+.confetti{position:absolute;width:10px;height:14px;top:-10px;border-radius:3px;animation:fall 1.1s ease-in forwards;pointer-events:none}
+@keyframes fall{to{transform:translateY(140px) rotate(320deg);opacity:0}}
+
+/* Klaar */
+.result{align-items:center;text-align:center}
+.result .stars{display:flex;gap:8px}
+.result .stars svg{width:64px;height:64px}
+.result h2{font-size:clamp(2rem,6vw,2.8rem)}
+.result p{font-size:1.2rem;margin:0}
+.levelup{background:var(--gold);color:var(--ink);font-family:var(--display);font-weight:800;font-size:1.3rem;padding:8px 18px;border-radius:999px}
+.row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center}
+
+/* Winkel */
+.shop{display:grid;grid-template-columns:minmax(0,300px) minmax(0,1fr);gap:20px;align-items:start}
+.stage{background:var(--card);border:2px solid var(--line);border-radius:var(--r);padding:16px;display:flex;flex-direction:column;gap:12px;position:sticky;top:12px}
+.stage .av{border-radius:20px;overflow:hidden;aspect-ratio:200/220;max-width:100%}
+.stage .av svg{width:100%;height:100%;display:block}
+.swatches{display:flex;flex-direction:column;gap:6px}
+.swatches .lab{font-size:.85rem;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.sw-row{display:flex;gap:8px;flex-wrap:wrap}
+.sw{width:36px;height:36px;border-radius:50%;background:var(--s);border:3px solid var(--card);box-shadow:0 0 0 2px var(--line)}
+.sw.on{box-shadow:0 0 0 3px var(--ink)}
+.try-box{border-radius:16px;background:var(--soft);padding:12px;display:flex;flex-direction:column;gap:8px}
+.try-box strong{font-family:var(--display);font-size:1.25rem}
+.try-box .need{color:var(--bad);font-weight:800}
+.shopside{display:flex;flex-direction:column;gap:14px;min-width:0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap}
+.tab{font-family:var(--display);font-weight:700;font-size:1.05rem;padding:8px 16px;border-radius:999px;background:var(--card);border:2px solid var(--line)}
+.tab.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:12px}
+.item{background:var(--card);border:3px solid var(--line);border-radius:18px;padding:8px;display:flex;flex-direction:column;gap:6px;text-align:left}
+.item .pv{border-radius:12px;overflow:hidden;aspect-ratio:200/220}
+.item .pv svg{width:100%;height:100%;display:block}
+.item .nm{font-weight:800;font-size:1rem;line-height:1.2}
+.item .st{display:flex;align-items:center;gap:5px;font-weight:800;font-size:.95rem;font-variant-numeric:tabular-nums}
+.item .st .coin{width:20px;height:20px}
+.item.worn{border-color:var(--good)}
+.item.worn .st{color:var(--good)}
+.item.trying{border-color:var(--gold)}
+.item.locked .pv{opacity:.85}
+
+@media (max-width:640px){
+  .shop{grid-template-columns:1fr}
+  .stage{position:static;flex-direction:row;flex-wrap:wrap}
+  .stage .av{width:150px;flex:none}
+  .stage .side{flex:1;min-width:150px;display:flex;flex-direction:column;gap:10px}
+  .hello{grid-template-columns:1fr;justify-items:start}
+  .hello .big-av{width:110px;height:121px}
+}
+@media (min-width:641px){ .stage .side{display:flex;flex-direction:column;gap:12px} }
+@media (prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <button class="logo" id="logo" aria-label="Naar het begin">
+      <span class="tiles" aria-hidden="true">
+        <span style="background:var(--plus)">+</span><span style="background:var(--min)">−</span>
+        <span style="background:var(--keer)">×</span><span style="background:var(--deel)">:</span>
+      </span>
+      Rekenavontuur
+    </button>
+    <div class="top-right">
+      <div class="pill" id="pill" aria-label="Punten"><span id="coin-top"></span><span id="punten">0</span></div>
+      <button class="mini-av" id="mini-av" aria-label="Naar mijn avatar"></button>
+    </div>
+  </header>
+
+  <!-- HOME -->
+  <main id="s-home" class="wrap" style="gap:20px">
+    <section class="hello">
+      <div class="big-av" id="home-av"></div>
+      <div>
+        <h1 id="hallo">Hoi!</h1>
+        <p>Kies een thema. Lees eerst de uitleg, dan kun je oefenen en punten verdienen.</p>
+        <div class="name-row">
+          <label for="naam">Jouw naam</label>
+          <input id="naam" maxlength="16" autocomplete="off" placeholder="Typ je naam">
+        </div>
+      </div>
+    </section>
+    <h2 class="section-title">Wat ga je oefenen?</h2>
+    <section class="themes" id="themes"></section>
+    <section class="shop-cta">
+      <div>
+        <h2>Avatar-winkel</h2>
+        <p>Koop kapsels, hoeden en meer met je punten.</p>
+      </div>
+      <button class="btn" style="--c:var(--gold);color:var(--ink)" id="naar-winkel">Naar de winkel</button>
+    </section>
+    <details class="parents">
+      <summary>Voor ouders: voortgang</summary>
+      <div class="table-wrap"><table id="stats"></table></div>
+      <h3 style="font-size:1.15rem;margin-top:16px">Voorleesstem</h3>
+      <div id="stem-box"></div>
+      <div class="reset-row" id="reset-row">
+        <button class="btn ghost" id="reset">Alles opnieuw beginnen</button>
+      </div>
+    </details>
+  </main>
+
+  <!-- UITLEG -->
+  <main id="s-uitleg" hidden>
+    <section class="panel" id="uitleg"></section>
+  </main>
+
+  <!-- OEFENEN -->
+  <main id="s-oefen" hidden>
+    <section class="panel" id="oefen"></section>
+  </main>
+
+  <!-- KLAAR -->
+  <main id="s-klaar" hidden>
+    <section class="panel result" id="klaar"></section>
+  </main>
+
+  <!-- WINKEL -->
+  <main id="s-winkel" hidden>
+    <div class="bar" style="margin-bottom:14px">
+      <button class="back" id="winkel-terug">← Terug</button>
+      <h2 style="font-size:1.8rem">Avatar-winkel</h2>
+    </div>
+    <section class="shop">
+      <aside class="stage" id="stage"></aside>
+      <div class="shopside">
+        <div class="tabs" id="tabs"></div>
+        <div class="items" id="items"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+/* ---------- Basis ---------- */
+const $ = s => document.querySelector(s);
+const rnd = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+const pick = a => a[rnd(0,a.length-1)];
+const shuffle = a => { for(let i=a.length-1;i>0;i--){const j=rnd(0,i);[a[i],a[j]]=[a[j],a[i]]} return a; };
+
+const THEMAS = [
+  {id:'optellen', naam:'Optellen', teken:'+', c:'var(--plus)', hex:'#F0603F'},
+  {id:'aftrekken', naam:'Aftrekken', teken:'−', c:'var(--min)', hex:'#2B8FD6'},
+  {id:'vermenigvuldigen', naam:'Keer-sommen', teken:'×', c:'var(--keer)', hex:'#35A257'},
+  {id:'delen', naam:'Delen', teken:':', c:'var(--deel)', hex:'#8656D2'},
+  {id:'breuken', naam:'Breuken', teken:'½', c:'var(--breuk)', hex:'#DC9A0E'},
+];
+const T = id => THEMAS.find(t => t.id === id);
+
+const COIN = '<svg class="coin" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="13" fill="#F5B82E" stroke="#B9800C" stroke-width="2.5"/><circle cx="15" cy="15" r="8.5" fill="none" stroke="#FFE08A" stroke-width="2"/><path d="M15 9.5l1.6 3.4 3.7.4-2.8 2.5.8 3.6-3.3-1.9-3.3 1.9.8-3.6-2.8-2.5 3.7-.4z" fill="#FFF3C4"/></svg>';
+const STAR = on => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z" fill="${on?'#F5B82E':'#D5E3D9'}" stroke="${on?'#B9800C':'#BFCFC4'}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
+const SPEAKER = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#22304A"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="#22304A" stroke-width="2" stroke-linecap="round"/></svg>';
+
+/* ---------- Opslag ---------- */
+const KEY = 'rekenavontuur-v1';
+function nieuw(){
+  const niveau={}, stats={};
+  THEMAS.forEach(t => { niveau[t.id]=1; stats[t.id]={goed:0,totaal:0}; });
+  return { naam:'', punten:20, gekocht:[], huid:0, haar:0,
+    aan:{achtergrond:'a-zacht', kapsel:'k-kort', shirt:'s-geel', hoofd:'h-geen', extra:'e-geen'},
+    niveau, stats };
+}
+function laad(){ try{ const t=localStorage.getItem(KEY); if(t){ const o=JSON.parse(t); const n=nieuw(); return {...n,...o, aan:{...n.aan,...o.aan}, niveau:{...n.niveau,...o.niveau}, stats:{...n.stats,...o.stats}}; } }catch(e){} return nieuw(); }
+function bewaar(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
+let S = laad();
+
+/* ---------- Spraak en geluid ---------- */
+/* Nederlandse stemmen: de lijst laadt vaak pas later, dus we luisteren naar 'voiceschanged'.
+   Voorkeur: nl-NL boven nl-BE, en de natuurlijk klinkende stemmen (Online/Natural, Google, Premium/Enhanced) eerst. */
+let nlStemmen = [];
+function stemScore(v){
+  const n=(v.name||'').toLowerCase(), l=(v.lang||'').toLowerCase().replace('_','-');
+  let s = l==='nl-nl' ? 100 : 50;
+  if(/natural|online|neural/.test(n)) s+=40;
+  if(/premium|enhanced|verbeterd/.test(n)) s+=35;
+  if(/google/.test(n)) s+=25;
+  if(/fenna|colette|maarten|xander|claire|ellen/.test(n)) s+=10;
+  return s;
+}
+function laadStemmen(){
+  try{
+    nlStemmen = speechSynthesis.getVoices()
+      .filter(v => (v.lang||'').toLowerCase().replace('_','-').startsWith('nl'))
+      .sort((a,b) => stemScore(b)-stemScore(a));
+  }catch(e){ nlStemmen=[]; }
+  renderStemKeuze();
+}
+function gekozenStem(){
+  return nlStemmen.find(v => v.name===S.stem) || nlStemmen[0] || null;
+}
+function spreek(t){
+  try{
+    if(!('speechSynthesis' in window)) return;
+    if(!nlStemmen.length) laadStemmen();
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(t);
+    const v = gekozenStem();
+    if(v){ u.voice=v; u.lang=v.lang; } else { u.lang='nl-NL'; }
+    u.rate = S.tempo || .9;
+    speechSynthesis.speak(u);
+  }catch(e){}
+}
+function renderStemKeuze(){
+  const box = document.getElementById('stem-box'); if(!box) return;
+  if(!('speechSynthesis' in window)){ box.innerHTML='<p>Deze browser kan niet voorlezen.</p>'; return; }
+  if(!nlStemmen.length){
+    box.innerHTML = `<p><b>Er is geen Nederlandse stem gevonden op dit apparaat.</b> De app vraagt dan om Nederlands, maar sommige apparaten lezen toch met een Engels accent voor.</p>
+      <p>Zo voeg je een Nederlandse stem toe:</p>
+      <ul>
+        <li><b>iPad/iPhone:</b> Instellingen → Toegankelijkheid → Gesproken materiaal → Stemmen → Nederlands (kies een "Verbeterde" stem).</li>
+        <li><b>Windows:</b> Instellingen → Tijd en taal → Spraak → Stemmen toevoegen → Nederlands. In Microsoft Edge zijn ook natuurlijke Nederlandse stemmen standaard beschikbaar.</li>
+        <li><b>Android:</b> Instellingen → Tekst-naar-spraak → Spraakservices van Google → Spraakgegevens installeren → Nederlands.</li>
+        <li><b>Chromebook / Chrome:</b> de stem "Google Nederlands" is meestal al aanwezig.</li>
+      </ul>
+      <p>Herlaad de pagina na het installeren.</p>`;
+    return;
+  }
+  const huidig = gekozenStem();
+  box.innerHTML = `
+    <div class="stem-row">
+      <label for="stem">Stem</label>
+      <select id="stem">${nlStemmen.map(v=>`<option value="${v.name.replace(/"/g,'&quot;')}" ${huidig&&v.name===huidig.name?'selected':''}>${v.name} (${v.lang})</option>`).join('')}</select>
+    </div>
+    <div class="stem-row">
+      <label for="tempo">Tempo</label>
+      <input id="tempo" type="range" min="0.6" max="1.2" step="0.05" value="${S.tempo||.9}">
+      <button class="btn ghost" id="test-stem">Test de stem</button>
+    </div>`;
+  document.getElementById('stem').onchange = e => { S.stem=e.target.value; bewaar(); spreek('Hoi! Zo klink ik.'); };
+  document.getElementById('tempo').oninput = e => { S.tempo=+e.target.value; bewaar(); };
+  document.getElementById('test-stem').onclick = () => spreek('Hoi! Hoeveel is drie plus vier?');
+}
+try{
+  if('speechSynthesis' in window){
+    speechSynthesis.addEventListener ? speechSynthesis.addEventListener('voiceschanged', laadStemmen) : (speechSynthesis.onvoiceschanged = laadStemmen);
+  }
+}catch(e){}
+let actx=null;
+function piep(goed){
+  try{
+    actx = actx || new (window.AudioContext||window.webkitAudioContext)();
+    const notes = goed ? [660,880,1100] : [300,220];
+    notes.forEach((f,i)=>{
+      const o=actx.createOscillator(), g=actx.createGain();
+      o.type='triangle'; o.frequency.value=f; o.connect(g); g.connect(actx.destination);
+      const t=actx.currentTime+i*.09; g.gain.setValueAtTime(.0001,t); g.gain.exponentialRampToValueAtTime(.18,t+.02); g.gain.exponentialRampToValueAtTime(.0001,t+.18);
+      o.start(t); o.stop(t+.2);
+    });
+  }catch(e){}
+}
+
+/* ---------- Plaatjes voor rekenen ---------- */
+function dots(n, col, crossed=0){
+  let out='<div class="dots">';
+  for(let g=0; g<Math.ceil(n/5); g++){
+    out+='<div class="five">';
+    for(let i=g*5; i<Math.min(n,g*5+5); i++) out+=`<span class="dot${i>=n-crossed?' x':''}" style="--d:${col}"></span>`;
+    out+='</div>';
+  }
+  return out+'</div>';
+}
+function groups(g, per, col){
+  let out='<div class="groups">';
+  for(let i=0;i<g;i++){ out+=`<div class="grp" style="--d:${col}">`; for(let j=0;j<per;j++) out+=`<span class="dot" style="--d:${col}"></span>`; out+='</div>'; }
+  return out+'</div>';
+}
+function lijn(from, to, on=[], start=null){
+  let out='<div class="line">';
+  const step = from<=to ? 1 : -1;
+  for(let i=from; step>0 ? i<=to : i>=to; i+=step) out+=`<span class="chip${on.includes(i)?' on':''}${i===start?' start':''}">${i}</span>`;
+  return out+'</div>';
+}
+function pie(n, k, col, size=150){
+  const r=60, cx=70, cy=70;
+  let s=`<svg class="pie" viewBox="0 0 140 140" width="${size}" height="${size}" role="img" aria-label="${k} van de ${n} stukken gekleurd"><circle cx="70" cy="70" r="66" fill="#E6B877"/>`;
+  for(let i=0;i<n;i++){
+    const a0=-Math.PI/2+i*2*Math.PI/n, a1=a0+2*Math.PI/n;
+    const x0=cx+r*Math.cos(a0), y0=cy+r*Math.sin(a0), x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
+    s+=`<path d="M${cx} ${cy} L${x0.toFixed(2)} ${y0.toFixed(2)} A${r} ${r} 0 0 1 ${x1.toFixed(2)} ${y1.toFixed(2)}Z" fill="${i<k?col:'#FFF4DA'}" stroke="#9A6424" stroke-width="3" stroke-linejoin="round"/>`;
+  }
+  return s+'</svg>';
+}
+const frac = (k,n) => `<span class="frac"><span>${k}</span><span>${n}</span></span>`;
+const WOORD = ['nul','een','twee','drie','vier','vijf','zes','zeven','acht','negen','tien'];
+function fracWoord(k,n){
+  if(n===2) return k===1?'een half':`${WOORD[k]} halve`;
+  if(n===4) return k===1?'een kwart':`${WOORD[k]} kwart`;
+  const d = {3:'derde',5:'vijfde',6:'zesde',8:'achtste'}[n] || n+'de';
+  return `${WOORD[k]} ${d}`;
+}
+
+/* ---------- Uitleg per thema ---------- */
+const UITLEG = {
+  optellen: [
+    {t:'Erbij doen', x:'Optellen betekent: je doet er iets bij. Je hebt 3 rode bolletjes. Je krijgt er 2 blauwe bij.',
+     v:()=>dots(3,'#F0603F')+'<span class="op">+</span>'+dots(2,'#2B8FD6')},
+    {t:'Samen tellen', x:'Tel nu alles samen: 1, 2, 3, 4, 5. Dus 3 plus 2 is 5.',
+     v:()=>'<div class="eq">3 + 2 = <b>5</b></div>'+dots(5,'#F0603F')},
+    {t:'Slim doortellen', x:'Begin bij het grootste getal en tel verder. Bij 7 + 3 zeg je: 7. En dan 8, 9, 10!',
+     v:()=>'<div class="eq">7 + 3 = <b>10</b></div>'+lijn(6,11,[8,9,10],7)},
+  ],
+  aftrekken: [
+    {t:'Eraf halen', x:'Aftrekken betekent: er gaat iets weg. Je hebt 6 koekjes en je eet er 2 op.',
+     v:()=>dots(6,'#2B8FD6',2)},
+    {t:'Wat blijft er over?', x:'Tel wat er nog over is: 4 koekjes. Dus 6 min 2 is 4.',
+     v:()=>'<div class="eq">6 − 2 = <b>4</b></div>'+dots(4,'#2B8FD6')},
+    {t:'Terugtellen', x:'Je kunt ook terugtellen. Bij 10 − 3 zeg je: 10. En dan 9, 8, 7!',
+     v:()=>'<div class="eq">10 − 3 = <b>7</b></div>'+lijn(11,6,[9,8,7],10)},
+  ],
+  vermenigvuldigen: [
+    {t:'Groepjes', x:'Keer-sommen gaan over groepjes die even groot zijn. Hier zie je 3 zakjes met in elk zakje 4 snoepjes.',
+     v:()=>groups(3,4,'#35A257')},
+    {t:'Groepjes optellen', x:'Tel de groepjes bij elkaar op: 4 + 4 + 4 = 12. Dus 3 keer 4 is 12.',
+     v:()=>'<div class="eq">4 + 4 + 4 = <b>12</b></div><div class="eq">3 × 4 = <b>12</b></div>'},
+    {t:'Sprongen maken', x:'De tafel van 2 is springen met 2: 2, 4, 6, 8, 10. Zo leer je de tafels!',
+     v:()=>lijn(1,10,[2,4,6,8,10])},
+  ],
+  delen: [
+    {t:'Eerlijk verdelen', x:'Delen is eerlijk verdelen. Er zijn 12 snoepjes en 3 kinderen. Iedereen moet evenveel krijgen.',
+     v:()=>dots(12,'#8656D2')},
+    {t:'Om de beurt', x:'Geef ieder kind om de beurt een snoepje. Iedereen krijgt er 4. Dus 12 gedeeld door 3 is 4.',
+     v:()=>groups(3,4,'#8656D2')+'<div class="eq">12 : 3 = <b>4</b></div>'},
+    {t:'Tafels helpen', x:'Delen is een keer-som andersom. Je weet: 3 × 4 = 12. Dus 12 : 3 = 4.',
+     v:()=>'<div class="eq">3 × 4 = 12</div><div class="eq">12 : 3 = <b>4</b></div>'},
+  ],
+  breuken: [
+    {t:'In stukjes', x:'Een breuk is een stukje van iets heels. Deze pizza is in 2 even grote stukken gesneden. Eén stuk is een half.',
+     v:()=>pie(2,1,'#DC9A0E')+`<div class="eq">${frac(1,2)}</div>`},
+    {t:'Een kwart', x:'Snijd je de pizza in 4 even grote stukken? Dan is één stuk een kwart.',
+     v:()=>pie(4,1,'#DC9A0E')+`<div class="eq">${frac(1,4)}</div>`},
+    {t:'Boven en onder', x:'Het getal onder de streep zegt in hoeveel stukken je snijdt. Het getal boven zegt hoeveel stukken je pakt. Drie kwart is 3 van de 4 stukken.',
+     v:()=>pie(4,3,'#DC9A0E')+`<div class="eq">${frac(3,4)}</div>`},
+    {t:'De helft van', x:'De helft van 8 is 4. Je verdeelt 8 in 2 even grote groepjes.',
+     v:()=>groups(2,4,'#DC9A0E')+'<div class="eq">de helft van 8 = <b>4</b></div>'},
+  ],
+};
+
+/* ---------- Sommen maken ---------- */
+function numOpties(ans){
+  const set = new Set([ans]);
+  const d = shuffle([1,-1,2,-2,3]).concat([10,-10,4,-4,5,-5,6,7,8]);
+  for(const x of d){ if(set.size>=4) break; if(ans+x>=0) set.add(ans+x); }
+  return shuffle([...set]).map(v => ({key:String(v), html:String(v)}));
+}
+const DINGEN = ['ballonnen','stickers','knikkers','appels','schelpen','kralen'];
+
+const GEN = {
+  optellen(L){
+    const max=[10,20,50][L-1];
+    const a=rnd(1,max-1), b=rnd(1,max-a), ans=a+b;
+    const col='#F0603F';
+    const v = ans<=20 ? dots(a,col)+'<span class="op">+</span>'+dots(b,'#2B8FD6') : lijn(a, a+Math.min(b,6), [], a);
+    if(L<3 && Math.random()<.3){
+      const d=pick(DINGEN);
+      return {vraag:`Je hebt ${a} ${d}. Je krijgt er ${b} bij. Hoeveel ${d} heb je nu?`, story:true,
+        spreek:`Je hebt ${a} ${d}. Je krijgt er ${b} bij. Hoeveel ${d} heb je nu?`, antwoord:String(ans), opties:numOpties(ans), hint:v, uitleg:`${a} + ${b} = ${ans}`};
+    }
+    return {vraag:`${a} + ${b} = ?`, spreek:`Hoeveel is ${a} plus ${b}?`, antwoord:String(ans), opties:numOpties(ans), hint:v, uitleg:`${a} + ${b} = ${ans}`};
+  },
+  aftrekken(L){
+    const max=[10,20,50][L-1];
+    const a=rnd(3,max), b=rnd(1,a-1), ans=a-b;
+    const v = a<=20 ? dots(a,'#2B8FD6',b) : lijn(a, a-Math.min(b,6), [], a);
+    if(L<3 && Math.random()<.3){
+      const d=pick(DINGEN);
+      return {vraag:`Je hebt ${a} ${d}. Je geeft er ${b} weg. Hoeveel heb je er nog?`, story:true,
+        spreek:`Je hebt ${a} ${d}. Je geeft er ${b} weg. Hoeveel heb je er nog?`, antwoord:String(ans), opties:numOpties(ans), hint:v, uitleg:`${a} − ${b} = ${ans}`};
+    }
+    return {vraag:`${a} − ${b} = ?`, spreek:`Hoeveel is ${a} min ${b}?`, antwoord:String(ans), opties:numOpties(ans), hint:v, uitleg:`${a} − ${b} = ${ans}`};
+  },
+  vermenigvuldigen(L){
+    const t=pick([[1,2,10],[2,5,10],[2,3,4,5,10]][L-1]);
+    const f=rnd(1, L===1?5:10), ans=f*t;
+    const v = ans<=30 ? groups(f,t,'#35A257') : `<div class="eq">${Array(f).fill(t).join(' + ')}</div>`;
+    return {vraag:`${f} × ${t} = ?`, spreek:`Hoeveel is ${f} keer ${t}?`, antwoord:String(ans), opties:numOpties(ans), hint:v, uitleg:`${f} groepjes van ${t} = ${ans}`};
+  },
+  delen(L){
+    const t=pick([[2,10],[2,5,10],[2,3,4,5]][L-1]);
+    const q=rnd(1, L===1?5:10), tot=t*q;
+    const v = tot<=30 ? groups(t,q,'#8656D2') : `<div class="eq">${t} × ? = ${tot}</div>`;
+    if(Math.random()<.35 && tot<=30){
+      return {vraag:`${tot} snoepjes eerlijk verdelen over ${t} kinderen. Hoeveel krijgt ieder kind?`, story:true,
+        spreek:`${tot} snoepjes eerlijk verdelen over ${t} kinderen. Hoeveel krijgt ieder kind?`, antwoord:String(q), opties:numOpties(q), hint:v, uitleg:`${tot} : ${t} = ${q}`};
+    }
+    return {vraag:`${tot} : ${t} = ?`, spreek:`Hoeveel is ${tot} gedeeld door ${t}?`, antwoord:String(q), opties:numOpties(q), hint:v, uitleg:`${tot} : ${t} = ${q}, want ${t} × ${q} = ${tot}`};
+  },
+  breuken(L){
+    const soort = L===1 ? 'pie' : pick(L===2 ? ['pie','van','van'] : ['pie','van','van','groter']);
+    if(soort==='pie'){
+      const n=pick(L===1?[2,3,4]:L===2?[2,3,4,6]:[3,4,6,8]), k=rnd(1,n-1);
+      const pool=[];
+      [2,3,4,6,8].forEach(d=>{ for(let i=1;i<d;i++) pool.push([i,d]); });
+      const val=k/n;
+      const zelfde = shuffle(pool.filter(([a,b])=>b===n && a!==k));
+      const ander = shuffle(pool.filter(([a,b])=>b!==n && Math.abs(a/b-val)>1e-9));
+      const kies = zelfde.slice(0,2).concat(ander).slice(0,3);
+      const opties = shuffle([[k,n],...kies]).map(([a,b])=>({key:`${a}/${b}`, html:frac(a,b)}));
+      return {vraag:pie(n,k,'#DC9A0E',170)+'<div style="width:100%">Welk deel is gekleurd?</div>', visualQ:true,
+        spreek:'Welk deel van de pizza is gekleurd?', antwoord:`${k}/${n}`, opties,
+        hint:`<div style="width:100%;text-align:center;font-weight:700">Tel alle stukken: dat is het getal onder de streep. Tel de gekleurde stukken: dat is het getal erboven.</div>`,
+        uitleg:`${k} van de ${n} stukken = `+frac(k,n), uitlegSpreek:`${k} van de ${n} stukken. Dat is ${fracWoord(k,n)}.`};
+    }
+    if(soort==='van'){
+      const n=pick(L===2?[2,2,4]:[2,3,4]);
+      const per=rnd(1,5), tot=n*per;
+      const naam = n===2?'de helft':n===4?'een kwart':'een derde';
+      return {vraag:`Hoeveel is ${naam} van ${tot}?`, story:true, spreek:`Hoeveel is ${naam} van ${tot}?`,
+        antwoord:String(per), opties:numOpties(per), hint:groups(n,per,'#DC9A0E'),
+        uitleg:`${tot} verdelen in ${n} groepjes: ${per} in elk groepje`};
+    }
+    // groter
+    const paren=[[[1,2],[1,4]],[[1,2],[1,3]],[[3,4],[1,4]],[[2,3],[1,3]],[[1,3],[1,4]],[[3,4],[1,2]]];
+    const [g,k]=pick(paren);
+    return {vraag:'Welk stuk pizza is groter?', story:true, spreek:'Welk stuk pizza is groter?',
+      antwoord:`${g[0]}/${g[1]}`, opties:shuffle([g,k]).map(([a,b])=>({key:`${a}/${b}`,html:frac(a,b)})),
+      hint:pie(g[1],g[0],'#DC9A0E',120)+pie(k[1],k[0],'#2B8FD6',120),
+      uitleg:frac(g[0],g[1])+' is groter dan '+frac(k[0],k[1]), uitlegSpreek:`${fracWoord(g[0],g[1])} is groter dan ${fracWoord(k[0],k[1])}.`};
+  },
+};
+
+/* ---------- Avatar ---------- */
+const HUID = ['#F6D3B3','#E8B48A','#C68A5E','#8D5A3B'];
+const HAAR = ['#3B2A20','#7A4A26','#E2B64C','#C2462E','#22304A'];
+const ITEMS = [
+  {id:'a-zacht', cat:'achtergrond', naam:'Zacht groen', prijs:0},
+  {id:'a-lucht', cat:'achtergrond', naam:'Blauwe lucht', prijs:40},
+  {id:'a-regenboog', cat:'achtergrond', naam:'Regenboog', prijs:120},
+  {id:'a-ruimte', cat:'achtergrond', naam:'De ruimte', prijs:150},
+  {id:'k-kort', cat:'kapsel', naam:'Kort', prijs:0},
+  {id:'k-staart', cat:'kapsel', naam:'Staartjes', prijs:30},
+  {id:'k-lang', cat:'kapsel', naam:'Lang haar', prijs:30},
+  {id:'k-knot', cat:'kapsel', naam:'Knotje', prijs:50},
+  {id:'k-krul', cat:'kapsel', naam:'Krullen', prijs:60},
+  {id:'s-geel', cat:'shirt', naam:'Geel shirt', prijs:0},
+  {id:'s-blauw', cat:'shirt', naam:'Blauw shirt', prijs:0},
+  {id:'s-roze', cat:'shirt', naam:'Roze shirt', prijs:20},
+  {id:'s-streep', cat:'shirt', naam:'Streepjes', prijs:60},
+  {id:'s-ster', cat:'shirt', naam:'Sterrenshirt', prijs:90},
+  {id:'h-geen', cat:'hoofd', naam:'Niks op', prijs:0},
+  {id:'h-strik', cat:'hoofd', naam:'Strik', prijs:30},
+  {id:'h-pet', cat:'hoofd', naam:'Pet', prijs:50},
+  {id:'h-heks', cat:'hoofd', naam:'Heksenhoed', prijs:80},
+  {id:'h-kroon', cat:'hoofd', naam:'Kroon', prijs:200},
+  {id:'e-geen', cat:'extra', naam:'Niks', prijs:0},
+  {id:'e-bril', cat:'extra', naam:'Bril', prijs:40},
+  {id:'e-zon', cat:'extra', naam:'Zonnebril', prijs:70},
+  {id:'e-ballon', cat:'extra', naam:'Ballon', prijs:100},
+  {id:'e-sterren', cat:'extra', naam:'Sterretjes', prijs:130},
+];
+const CATS = [['kapsel','Kapsel'],['shirt','Shirt'],['hoofd','Op je hoofd'],['extra','Extra'],['achtergrond','Achtergrond']];
+const heeft = id => { const it=ITEMS.find(i=>i.id===id); return it.prijs===0 || S.gekocht.includes(id); };
+
+function ster(cx,cy,R,r,fill){ const p=[]; for(let i=0;i<10;i++){ const a=-Math.PI/2+i*Math.PI/5, d=i%2?r:R; p.push((cx+d*Math.cos(a)).toFixed(1)+','+(cy+d*Math.sin(a)).toFixed(1)); } return `<polygon points="${p.join(' ')}" fill="${fill}"/>`; }
+const BG = {
+  'a-zacht':()=>'<rect width="200" height="220" fill="#DDEFE3"/><circle cx="162" cy="38" r="20" fill="#FBE7A1"/>',
+  'a-lucht':()=>'<rect width="200" height="220" fill="#BFE2F8"/><g fill="#fff"><ellipse cx="40" cy="40" rx="22" ry="10"/><ellipse cx="54" cy="33" rx="14" ry="10"/><ellipse cx="160" cy="58" rx="20" ry="9"/><ellipse cx="171" cy="52" rx="12" ry="9"/></g>',
+  'a-regenboog':()=>{ let s='<rect width="200" height="220" fill="#FFF3E0"/>'; ['#F0603F','#F5B82E','#35A257','#2B8FD6','#8656D2'].forEach((c,i)=>{const r=96-i*10; s+=`<path d="M${100-r} 222 A${r} ${r} 0 0 1 ${100+r} 222" stroke="${c}" stroke-width="10" fill="none"/>`;}); return s; },
+  'a-ruimte':()=>{ let s='<rect width="200" height="220" fill="#20254A"/><g fill="#fff">'; [[20,30],[48,62],[30,140],[178,120],[150,20],[100,14],[186,190],[14,200],[60,24]].forEach(([x,y],i)=>s+=`<circle cx="${x}" cy="${y}" r="${i%3?1.6:2.4}"/>`); return s+'</g><circle cx="166" cy="46" r="15" fill="#F2A65A"/><ellipse cx="166" cy="46" rx="25" ry="6" fill="none" stroke="#FBD8A8" stroke-width="3"/>'; },
+};
+const FRINGE='<path d="M54 100 Q50 48 100 48 Q150 48 146 100 Q138 80 118 76 Q100 90 78 80 Q62 84 54 100Z" fill="HC"/>';
+function haarAchter(k,c){
+  if(k==='k-lang') return `<path d="M52 100 Q48 44 100 44 Q152 44 148 100 L152 178 Q132 186 126 164 L126 120 L74 120 L74 164 Q68 186 48 178Z" fill="${c}"/>`;
+  if(k==='k-staart') return `<circle cx="44" cy="98" r="18" fill="${c}"/><circle cx="156" cy="98" r="18" fill="${c}"/><circle cx="58" cy="98" r="5" fill="#F0603F"/><circle cx="142" cy="98" r="5" fill="#F0603F"/>`;
+  if(k==='k-krul') return [[56,112],[51,90],[60,68],[78,53],[100,46],[122,53],[140,68],[149,90],[144,112]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="15" fill="${c}"/>`).join('');
+  return '';
+}
+function haarVoor(k,c){
+  let s = FRINGE.replace('HC',c);
+  if(k==='k-knot') s += `<circle cx="100" cy="44" r="17" fill="${c}"/>`;
+  if(k==='k-krul') s += [[70,72],[86,62],[104,60],[122,64],[134,77]].map(([x,y])=>`<circle cx="${x}" cy="${y}" r="11" fill="${c}"/>`).join('');
+  return s;
+}
+const TORSO='M40 232 Q42 166 100 160 Q158 166 160 232Z';
+function shirt(id, uid){
+  const kl={'s-geel':'#F5B82E','s-blauw':'#2B8FD6','s-roze':'#F28DB2','s-streep':'#FFFFFF','s-ster':'#35A257'}[id];
+  let s=`<path d="${TORSO}" fill="${kl}"/>`;
+  if(id==='s-streep'){ s+=`<g clip-path="url(#${uid}t)">`; for(let i=0;i<5;i++) s+=`<rect x="30" y="${166+i*14}" width="140" height="7" fill="#F0603F"/>`; s+='</g>'; }
+  if(id==='s-ster') s+=ster(100,194,18,8,'#F5B82E');
+  return s+'<path d="M88 160 L100 172 L112 160" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="3" stroke-linecap="round"/>';
+}
+const HOOFD = {
+  'h-geen':'',
+  'h-strik':'<g transform="translate(134 62) rotate(20)"><path d="M0 0 L-18 -12 L-18 12Z" fill="#E8457A"/><path d="M0 0 L18 -12 L18 12Z" fill="#E8457A"/><circle r="6" fill="#C2335F"/></g>',
+  'h-pet':'<path d="M54 82 Q54 36 100 36 Q146 36 146 82Z" fill="#2B8FD6"/><path d="M96 80 Q130 74 168 84 Q168 92 132 92 Q110 92 96 88Z" fill="#1E6BA8"/><circle cx="100" cy="38" r="5" fill="#1E6BA8"/>',
+  'h-heks':'<path d="M68 62 L108 4 L132 62Z" fill="#4A3A7A"/><rect x="70" y="49" width="62" height="9" fill="#F5B82E"/><ellipse cx="100" cy="62" rx="60" ry="10" fill="#3A2D63"/>',
+  'h-kroon':'<polygon points="66,64 66,30 83,46 100,22 117,46 134,30 134,64" fill="#F5B82E" stroke="#B9800C" stroke-width="3" stroke-linejoin="round"/><circle cx="100" cy="50" r="5" fill="#E8457A"/><circle cx="80" cy="56" r="4" fill="#2B8FD6"/><circle cx="120" cy="56" r="4" fill="#35A257"/>',
+};
+const EXTRA = {
+  'e-geen':'',
+  'e-bril':'<g fill="none" stroke="#22304A" stroke-width="3.5"><circle cx="83" cy="104" r="13"/><circle cx="117" cy="104" r="13"/><path d="M96 104 L104 104"/></g>',
+  'e-zon':'<g stroke="#22304A" stroke-width="3"><circle cx="83" cy="104" r="13" fill="#22304A"/><circle cx="117" cy="104" r="13" fill="#22304A"/><path d="M96 103 L104 103"/></g><path d="M76 98 L84 96" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".6"/><path d="M110 98 L118 96" stroke="#fff" stroke-width="3" stroke-linecap="round" opacity=".6"/>',
+  'e-ballon':'<path d="M156 205 Q168 160 172 118" stroke="#22304A" stroke-width="2" fill="none"/><ellipse cx="174" cy="92" rx="18" ry="23" fill="#F0603F"/><path d="M170 114 L178 114 L174 120Z" fill="#F0603F"/><ellipse cx="168" cy="84" rx="4" ry="7" fill="#fff" opacity=".5"/>',
+  'e-sterren':ster(40,58,10,4.5,'#F5B82E')+ster(162,142,8,3.5,'#F5B82E')+ster(34,150,7,3,'#F5B82E')+ster(166,36,9,4,'#F5B82E'),
+};
+let avId=0;
+function avatar(aan, huid=S.huid, haar=S.haar){
+  const u='av'+(avId++), skin=HUID[huid], hc=HAAR[haar];
+  return `<svg viewBox="0 0 200 220" role="img" aria-label="Avatar"><defs><clipPath id="${u}t"><path d="${TORSO}"/></clipPath><clipPath id="${u}b"><rect width="200" height="220"/></clipPath></defs><g clip-path="url(#${u}b)">`
+    + BG[aan.achtergrond]()
+    + haarAchter(aan.kapsel,hc)
+    + `<rect x="89" y="138" width="22" height="26" fill="${skin}"/>`
+    + shirt(aan.shirt,u)
+    + `<circle cx="55" cy="108" r="9" fill="${skin}"/><circle cx="145" cy="108" r="9" fill="${skin}"/><circle cx="100" cy="104" r="46" fill="${skin}"/>`
+    + `<circle cx="84" cy="104" r="5.5" fill="#22304A"/><circle cx="116" cy="104" r="5.5" fill="#22304A"/><circle cx="86" cy="102" r="1.8" fill="#fff"/><circle cx="118" cy="102" r="1.8" fill="#fff"/>`
+    + `<ellipse cx="72" cy="120" rx="8" ry="5" fill="#F28DB2" opacity=".55"/><ellipse cx="128" cy="120" rx="8" ry="5" fill="#F28DB2" opacity=".55"/>`
+    + `<path d="M86 122 Q100 134 114 122" fill="none" stroke="#22304A" stroke-width="4" stroke-linecap="round"/>`
+    + haarVoor(aan.kapsel,hc) + HOOFD[aan.hoofd] + EXTRA[aan.extra] + '</g></svg>';
+}
+
+/* ---------- Schermen ---------- */
+function toon(id){
+  ['home','uitleg','oefen','klaar','winkel'].forEach(s => $('#s-'+s).hidden = s!==id);
+  try{ speechSynthesis.cancel(); }catch(e){}
+  window.scrollTo({top:0});
+}
+function updateTop(){
+  $('#punten').textContent = S.punten;
+  $('#mini-av').innerHTML = avatar(S.aan);
+}
+function puntenErbij(n){
+  S.punten += n; bewaar(); updateTop();
+  const f=document.createElement('span'); f.className='float'; f.textContent='+'+n; $('#pill').appendChild(f);
+  setTimeout(()=>f.remove(),1000);
+}
+
+function renderHome(){
+  $('#home-av').innerHTML = avatar(S.aan);
+  $('#hallo').textContent = S.naam ? `Hoi ${S.naam}!` : 'Hoi!';
+  $('#naam').value = S.naam;
+  $('#themes').innerHTML = THEMAS.map(t => `
+    <article class="theme" style="--c:${t.c}">
+      <div class="sym" aria-hidden="true">${t.teken}</div>
+      <h3>${t.naam}</h3>
+      <div class="lvl" aria-label="Niveau ${S.niveau[t.id]} van 3">${[1,2,3].map(i=>STAR(i<=S.niveau[t.id])).join('')}<span>&nbsp;niveau ${S.niveau[t.id]}</span></div>
+      <div class="acts">
+        <button class="btn ghost" data-uitleg="${t.id}">Uitleg</button>
+        <button class="btn" style="--c:${t.c}" data-oefen="${t.id}">Oefenen</button>
+      </div>
+    </article>`).join('');
+  $('#stats').innerHTML = '<tr><th>Thema</th><th>Niveau</th><th>Gelijk goed</th><th>Gemaakt</th><th>%</th></tr>' +
+    THEMAS.map(t => { const s=S.stats[t.id]; return `<tr><td>${t.naam}</td><td>${S.niveau[t.id]}</td><td>${s.goed}</td><td>${s.totaal}</td><td>${s.totaal?Math.round(s.goed/s.totaal*100)+'%':'–'}</td></tr>`; }).join('');
+  updateTop();
+}
+
+/* Uitleg */
+let uit = {thema:null, stap:0};
+function startUitleg(id){ uit={thema:id, stap:0}; renderUitleg(); toon('uitleg'); }
+function renderUitleg(){
+  const t=T(uit.thema), stappen=UITLEG[uit.thema], st=stappen[uit.stap], laatste = uit.stap===stappen.length-1;
+  const p=$('#uitleg'); p.style.setProperty('--c', t.c);
+  p.innerHTML = `
+    <div class="bar"><button class="back" data-home>← Stoppen</button><span class="spacer"></span><span class="tag"><i>${t.teken}</i>Uitleg ${t.naam.toLowerCase()}</span></div>
+    <div class="step-head">
+      <button class="speak" id="lees" aria-label="Lees voor">${SPEAKER}</button>
+      <div><h2>${st.t}</h2><p class="step-text">${st.x}</p></div>
+    </div>
+    <div class="visual">${st.v()}</div>
+    <div class="stepper">
+      <button class="btn ghost" id="vorige" ${uit.stap===0?'disabled':''}>← Vorige</button>
+      <div class="pips">${stappen.map((_,i)=>`<span class="pip${i<=uit.stap?' on':''}"></span>`).join('')}</div>
+      ${laatste ? `<button class="btn" style="--c:${t.c}" data-oefen="${t.id}">Ga oefenen!</button>` : `<button class="btn" style="--c:${t.c}" id="volgende">Volgende →</button>`}
+    </div>`;
+  $('#lees').onclick = () => spreek(st.t+'. '+st.x);
+  $('#vorige').onclick = () => { uit.stap--; renderUitleg(); };
+  if(!laatste) $('#volgende').onclick = () => { uit.stap++; renderUitleg(); };
+}
+
+/* Oefenen */
+const AANTAL = 10;
+const GOED = ['Super!','Goed zo!','Knap gedaan!','Helemaal goed!','Top!','Wauw!'];
+let ses = null;
+function startOefenen(id){
+  ses = {thema:id, i:0, goed:0, punten:0, reeks:0, uitslag:[], q:null, pog:0, klaar:false};
+  volgende(); toon('oefen');
+}
+function volgende(){
+  if(ses.i >= AANTAL) return einde();
+  ses.q = GEN[ses.thema](S.niveau[ses.thema]); ses.pog=0; ses.klaar=false;
+  renderVraag();
+}
+function renderVraag(fb=''){
+  const t=T(ses.thema), q=ses.q;
+  const p=$('#oefen'); p.style.setProperty('--c', t.c);
+  p.innerHTML = `
+    <div class="bar">
+      <button class="back" data-home>← Stoppen</button>
+      <div class="progress" aria-label="Som ${ses.i+1} van ${AANTAL}">${Array.from({length:AANTAL},(_,i)=>`<span class="${ses.uitslag[i]||(i===ses.i?'now':'')}"></span>`).join('')}</div>
+      <span class="tag"><i>${t.teken}</i></span>
+    </div>
+    <div class="q">
+      <button class="speak" id="lees" aria-label="Lees de som voor">${SPEAKER}</button>
+      <div class="qtext${q.story||q.visualQ?' story':''}" ${q.visualQ?'style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px"':''}>${q.vraag}</div>
+    </div>
+    <div class="visual" id="hint" hidden>${q.hint}</div>
+    <div class="answers">${q.opties.map(o=>`<button class="ans" data-key="${o.key}">${o.html}</button>`).join('')}</div>
+    <div id="fb">${fb}</div>`;
+  $('#lees').onclick = () => spreek(q.spreek);
+  p.querySelectorAll('.ans').forEach(b => b.onclick = () => kies(b));
+  if(!fb){ const h=document.createElement('div'); h.innerHTML=`<button class="hint-btn" id="hulp">Laat een hulpje zien</button>`; $('#fb').appendChild(h); $('#hulp').onclick=()=>{ $('#hint').hidden=false; h.remove(); }; }
+}
+function kies(btn){
+  if(ses.klaar || btn.disabled) return;
+  const q=ses.q, key=btn.dataset.key, st=S.stats[ses.thema];
+  if(ses.pog===0) st.totaal++;
+  const uitlegHtml = `<div style="margin-top:4px">${q.uitleg}</div>`;
+  if(key===q.antwoord){
+    ses.klaar=true; btn.classList.add('good');
+    document.querySelectorAll('.ans').forEach(b=>b.disabled=true);
+    let pts = ses.pog===0 ? 10 : 5, extra='';
+    if(ses.pog===0){ ses.goed++; st.goed++; ses.reeks++; ses.uitslag[ses.i]='ok'; } else { ses.reeks=0; ses.uitslag[ses.i]='half'; }
+    if(ses.pog===0 && ses.reeks>0 && ses.reeks%5===0){ pts+=10; extra=` <b>Bonus: 5 op rij!</b>`; }
+    ses.punten+=pts; puntenErbij(pts); piep(true);
+    const woord=pick(GOED);
+    fbToon('good', `<strong>${woord} +${pts} punten</strong>${uitlegHtml}${extra}`);
+    spreek(woord);
+    confetti();
+  } else {
+    ses.pog++; btn.classList.add('bad'); btn.disabled=true; ses.reeks=0; piep(false);
+    if(ses.pog===1){
+      $('#hint').hidden=false;
+      fbToon('try', `<strong>Bijna! Probeer het nog eens.</strong><div>Kijk goed naar het hulpje hierboven.</div>`, false);
+      spreek('Bijna! Probeer het nog eens.');
+    } else {
+      ses.klaar=true; ses.uitslag[ses.i]='no';
+      document.querySelectorAll('.ans').forEach(b=>{ b.disabled=true; if(b.dataset.key===q.antwoord) b.classList.add('good'); });
+      fbToon('show', `<strong>Het goede antwoord is groen.</strong>${uitlegHtml}`);
+      spreek('Kijk, dit is het goede antwoord. ' + (q.uitlegSpreek || q.uitleg.replace('−','min').replace(':','gedeeld door').replace('×','keer')));
+    }
+    bewaar();
+  }
+}
+function fbToon(kind, html, metKnop=true){
+  const laatste = ses.i===AANTAL-1;
+  $('#fb').innerHTML = `<div class="feedback ${kind}"><div class="msg">${html}</div>${metKnop?`<button class="btn" style="--c:var(--ink)" id="verder">${laatste?'Klaar!':'Volgende →'}</button>`:''}</div>`;
+  if(metKnop){ const v=$('#verder'); v.onclick=()=>{ ses.i++; volgende(); }; v.focus({preventScroll:true}); }
+}
+function confetti(){
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const box=$('#fb .feedback'); if(!box) return;
+  const kl=['#F0603F','#2B8FD6','#35A257','#8656D2','#F5B82E'];
+  for(let i=0;i<16;i++){ const c=document.createElement('span'); c.className='confetti'; c.style.left=rnd(2,96)+'%'; c.style.background=pick(kl); c.style.animationDelay=(Math.random()*.25)+'s'; box.appendChild(c); setTimeout(()=>c.remove(),1500); }
+}
+function einde(){
+  const t=T(ses.thema), g=ses.goed;
+  const sterren = g>=9?3:g>=6?2:g>=3?1:0;
+  let up='';
+  if(g>=8 && S.niveau[ses.thema]<3){ S.niveau[ses.thema]++; up=`<div class="levelup">Je gaat naar niveau ${S.niveau[ses.thema]}!</div>`; }
+  bewaar();
+  const p=$('#klaar'); p.style.setProperty('--c', t.c);
+  const titel = sterren===3?'Fantastisch!':sterren===2?'Goed gedaan!':sterren===1?'Lekker geoefend!':'Goed geprobeerd!';
+  p.innerHTML = `
+    <div class="stars">${[1,2,3].map(i=>STAR(i<=sterren)).join('')}</div>
+    <h2>${titel}</h2>
+    <p>Je had er <b>${g} van de ${AANTAL}</b> in één keer goed.</p>
+    <div class="pill">${COIN}<span>+${ses.punten}</span></div>
+    ${up}
+    <div class="row">
+      <button class="btn" style="--c:${t.c}" data-oefen="${t.id}">Nog een keer</button>
+      <button class="btn" style="--c:var(--gold);color:var(--ink)" data-winkel>Naar de winkel</button>
+      <button class="btn ghost" data-home>Ander thema</button>
+    </div>`;
+  toon('klaar');
+  spreek(`${titel} Je hebt ${ses.punten} punten verdiend.`);
+}
+
+/* Winkel */
+let cat='kapsel', pas=null;
+function renderWinkel(){
+  const pasItem = pas ? ITEMS.find(i=>i.id===pas) : null;
+  const aan = pasItem ? {...S.aan, [pasItem.cat]:pas} : S.aan;
+  let box='';
+  if(pasItem){
+    const genoeg = S.punten>=pasItem.prijs;
+    box = `<div class="try-box"><strong>${pasItem.naam}</strong>
+      <span style="display:flex;align-items:center;gap:6px;font-weight:800">${COIN}${pasItem.prijs} punten</span>
+      ${genoeg ? `<button class="btn" style="--c:var(--good)" id="koop">Kopen</button>` : `<span class="need">Je hebt nog ${pasItem.prijs-S.punten} punten nodig. Ga oefenen!</span>`}
+      <button class="btn ghost" id="stop-pas">Niet kopen</button></div>`;
+  } else {
+    box = `<div class="try-box"><strong>Tik op iets om het te passen.</strong><span>Gekocht? Dan trek je het meteen aan.</span></div>`;
+  }
+  $('#stage').innerHTML = `
+    <div class="av">${avatar(aan)}</div>
+    <div class="side">
+      <div class="swatches"><span class="lab">Huidskleur</span><div class="sw-row">${HUID.map((c,i)=>`<button class="sw${i===S.huid?' on':''}" style="--s:${c}" data-huid="${i}" aria-label="Huidskleur ${i+1}"></button>`).join('')}</div></div>
+      <div class="swatches"><span class="lab">Haarkleur</span><div class="sw-row">${HAAR.map((c,i)=>`<button class="sw${i===S.haar?' on':''}" style="--s:${c}" data-haar="${i}" aria-label="Haarkleur ${i+1}"></button>`).join('')}</div></div>
+      ${box}
+    </div>`;
+  $('#tabs').innerHTML = CATS.map(([id,n])=>`<button class="tab${id===cat?' on':''}" data-cat="${id}">${n}</button>`).join('');
+  $('#items').innerHTML = ITEMS.filter(i=>i.cat===cat).map(i=>{
+    const own=heeft(i.id), worn=S.aan[i.cat]===i.id, trying=pas===i.id;
+    const st = worn ? 'Heb je aan' : own ? 'Aantrekken' : `${COIN}${i.prijs}`;
+    return `<button class="item${worn?' worn':''}${trying?' trying':''}${own?'':' locked'}" data-item="${i.id}">
+      <div class="pv">${avatar({...S.aan,[i.cat]:i.id})}</div><span class="nm">${i.naam}</span><span class="st">${st}</span></button>`;
+  }).join('');
+  if(pasItem){
+    const k=$('#koop'); if(k) k.onclick=()=>{ S.punten-=pasItem.prijs; S.gekocht.push(pasItem.id); S.aan[pasItem.cat]=pasItem.id; pas=null; bewaar(); updateTop(); piep(true); spreek('Gekocht! '+pasItem.naam); renderWinkel(); };
+    $('#stop-pas').onclick=()=>{ pas=null; renderWinkel(); };
+  }
+}
+
+/* ---------- Klikken ---------- */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-home],[data-uitleg],[data-oefen],[data-winkel],[data-cat],[data-item],[data-huid],[data-haar]');
+  if(!el) return;
+  if(el.hasAttribute('data-home')){ renderHome(); toon('home'); }
+  else if(el.dataset.uitleg) startUitleg(el.dataset.uitleg);
+  else if(el.dataset.oefen) startOefenen(el.dataset.oefen);
+  else if(el.hasAttribute('data-winkel')){ pas=null; renderWinkel(); toon('winkel'); }
+  else if(el.dataset.cat){ cat=el.dataset.cat; pas=null; renderWinkel(); }
+  else if(el.dataset.item){ const it=ITEMS.find(i=>i.id===el.dataset.item); if(heeft(it.id)){ S.aan[it.cat]=it.id; pas=null; bewaar(); updateTop(); } else pas=it.id; renderWinkel(); }
+  else if(el.dataset.huid){ S.huid=+el.dataset.huid; bewaar(); updateTop(); renderWinkel(); }
+  else if(el.dataset.haar){ S.haar=+el.dataset.haar; bewaar(); updateTop(); renderWinkel(); }
+});
+$('#logo').onclick = () => { renderHome(); toon('home'); };
+$('#mini-av').onclick = $('#naar-winkel').onclick = () => { pas=null; renderWinkel(); toon('winkel'); };
+$('#winkel-terug').onclick = () => { renderHome(); toon('home'); };
+$('#naam').addEventListener('input', e => { S.naam=e.target.value.trim(); bewaar(); $('#hallo').textContent = S.naam?`Hoi ${S.naam}!`:'Hoi!'; });
+function vraagReset(){
+  $('#reset-row').innerHTML = '<span style="font-weight:800">Weet je het zeker? Alle punten en items gaan weg.</span><button class="btn" style="--c:var(--bad)" id="ja-reset">Ja, wis alles</button><button class="btn ghost" id="nee-reset">Nee</button>';
+  $('#ja-reset').onclick = () => { S=nieuw(); bewaar(); renderHome(); $('#reset-row').innerHTML='<button class="btn ghost" id="reset">Alles opnieuw beginnen</button>'; $('#reset').onclick = vraagReset; };
+  $('#nee-reset').onclick = () => { $('#reset-row').innerHTML='<button class="btn ghost" id="reset">Alles opnieuw beginnen</button>'; $('#reset').onclick = vraagReset; };
+}
+$('#reset').onclick = vraagReset;
+$('#coin-top').outerHTML = COIN;
+renderHome();
+laadStemmen();
+</script>
+
+</body></html>
