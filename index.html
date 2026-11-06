@@ -337,7 +337,7 @@ const KEY = 'rekenavontuur-v1';
 function nieuw(){
   const niveau={}, max={}, stats={};
   THEMAS.forEach(t => { niveau[t.id]=1; max[t.id]=1; stats[t.id]={goed:0,totaal:0}; });
-  return { naam:'', punten:20, gekocht:[], huid:0, haar:0, open:false, max,
+  return { naam:'', punten:20, gekocht:[], huid:0, haar:0, open:false, max, recent:{},
     aan:{achtergrond:'a-zacht', kapsel:'k-kort', shirt:'s-geel', hoofd:'h-geen', extra:'e-geen'},
     niveau, stats };
 }
@@ -675,7 +675,7 @@ const GEN = {
   vermenigvuldigen(L){
     const G='#35A257';
     const t=pick([[1,2,10],[2,3,4,5,10],[2,5,3,4,6,7,8,9,6,7,8,9]][L-1]);
-    const f=rnd(L===1?1:2, L===1?5:10), ans=f*t;
+    const f=rnd(L===1?1:2, 10), ans=f*t;
     const hint = (f<=6 && ans<=30) ? groups(f,t,G)
       : (L===3 && f>5) ? stapjes([`5 × ${t} = ${5*t}`,`${f-5} × ${t} = ${(f-5)*t}`,`${5*t} + ${(f-5)*t} = ${ans}`])
       : sprongen(t,f);
@@ -703,7 +703,7 @@ const GEN = {
         uitleg:`${n} : ${t} = ${q} rest ${r}, want ${t} × ${q} = ${t*q}`, uitlegSpreek:`${n} gedeeld door ${t} is ${q}, en er blijven ${r} over.`};
     }
     const t=pick([[2,10],[2,3,4,5,10],[3,4,6,7,8,9,6,7,8,9]][L-1]);
-    const q=rnd(1, L===1?5:10), tot=t*q;
+    const q=rnd(1, 10), tot=t*q;
     const hint = (tot<=30 && t<=6) ? groups(t,q,P) : stapjes([`Hoeveel keer ${t} is ${tot}?`])+sprongen(t,q);
     if(L>1 && kans(.2)) return gatSom(`${tot} : ${GAP} = ${q}`, `${tot} gedeeld door wat is ${q}?`, t,
       stapjes([`Hoeveel keer ${q} is ${tot}?`])+sprongen(q,t), `${tot} : ${t} = ${q}, want ${t} × ${q} = ${tot}`);
@@ -715,7 +715,7 @@ const GEN = {
   },
   breuken(L){
     const Y='#DC9A0E', B='#2B8FD6';
-    const soort = pick([['pie'],['pie','van','van','groter'],['pie3','van3','van3','gelijk','gelijk','groter3','samen','samen']][L-1]);
+    const soort = pick([['pie','pie','kies','van'],['pie','van','van','groter'],['pie3','van3','van3','gelijk','gelijk','groter3','samen','samen']][L-1]);
     if(soort==='pie' || soort==='pie3'){
       const n=pick(soort==='pie3' ? [5,6,8,10,12] : L===1 ? [2,3,4] : [2,3,4,6]), k=rnd(1,n-1);
       const zelfde=shuffle(Array.from({length:n-1},(_,i)=>[i+1,n]));
@@ -725,8 +725,16 @@ const GEN = {
         hint:'<div style="width:100%;text-align:center;font-weight:700">Tel alle stukken: dat is het getal onder de streep. Tel de gekleurde stukken: dat is het getal erboven.</div>',
         uitleg:`${k} van de ${n} stukken = `+frac(k,n), uitlegSpreek:`${k} van de ${n} stukken. Dat is ${fracWoord(k,n)}.`};
     }
+    if(soort==='kies'){
+      const pool=[[1,2],[1,3],[1,4],[2,3],[3,4]], [k,n]=pick(pool);
+      const andere=shuffle(pool.filter(([a,b])=>Math.abs(a/b-k/n)>1e-9)).slice(0,3);
+      return {vraag:`Welke pizza laat ${frac(k,n)} zien?`, story:true, spreek:`Welke pizza laat ${fracWoord(k,n)} zien?`, antwoord:`${k}/${n}`,
+        opties:shuffle([[k,n],...andere]).map(([a,b])=>({key:`${a}/${b}`, html:pie(b,a,Y,72)})),
+        hint:`<div style="width:100%;text-align:center;font-weight:700">Het getal onder de streep: in zoveel stukken is de pizza gesneden. Het getal erboven: zoveel stukken zijn gekleurd.</div>`,
+        uitleg:`${frac(k,n)} is ${k} van de ${n} stukken`, uitlegSpreek:`${fracWoord(k,n)} is ${k} van de ${n} stukken.`};
+    }
     if(soort==='van'){
-      const n=pick([2,2,4,3]), per=rnd(1,5), tot=n*per;
+      const n=L===1 ? 2 : pick([2,2,4,3]), per=rnd(1,L===1?5:6), tot=n*per;
       const naam = n===2?'de helft':n===4?'een kwart':'een derde';
       return {vraag:`Hoeveel is ${naam} van ${tot}?`, story:true, spreek:`Hoeveel is ${naam} van ${tot}?`,
         antwoord:String(per), opties:numOpties(per), hint:groups(n,per,Y), uitleg:`${tot} verdelen in ${n} groepjes: ${per} in elk groepje`};
@@ -924,12 +932,35 @@ const AANTAL = 10;
 const GOED = ['Super!','Goed zo!','Knap gedaan!','Helemaal goed!','Top!','Wauw!'];
 let ses = null;
 function startOefenen(id){
-  ses = {thema:id, L:S.niveau[id], i:0, goed:0, punten:0, reeks:0, uitslag:[], q:null, pog:0, klaar:false};
+  ses = {thema:id, L:S.niveau[id], i:0, goed:0, punten:0, reeks:0, uitslag:[], q:null, pog:0, klaar:false, gezien:new Set()};
   volgende(); toon('oefen');
+}
+/* Elke som krijgt een sleutel. Woorden uit verhaaltjes tellen niet mee,
+   zodat "6 + 3" met knikkers en met appels als dezelfde som geldt. */
+const somKey = q => (q.vraag+'|'+q.antwoord)
+  .replace(/ballonnen|stickers|knikkers|appels|schelpen|kralen|snoepjes|doosjes|zakjes|vazen|bakjes|eieren|bloemen|aardbeien|elk doosje|elk zakje|elke vaas|elk bakje/g,'#');
+const ONTHOUD = 40; // zoveel recente sommen per thema en niveau worden overgeslagen
+function nieuweSom(){
+  const pk = ses.thema+'-'+ses.L;
+  const recent = new Set((S.recent && S.recent[pk]) || []);
+  let reserve = null;
+  for(let i=0;i<80;i++){
+    const q = GEN[ses.thema](ses.L), k = somKey(q);
+    if(ses.gezien.has(k)) continue;          // nooit twee keer in dezelfde ronde
+    if(!recent.has(k)) return {q,k};         // liefst ook niet in de vorige rondes
+    if(!reserve) reserve = {q,k};
+  }
+  if(reserve) return reserve;
+  const q = GEN[ses.thema](ses.L); return {q, k:somKey(q)};
 }
 function volgende(){
   if(ses.i >= AANTAL) return einde();
-  ses.q = GEN[ses.thema](ses.L); ses.pog=0; ses.klaar=false;
+  const {q,k} = nieuweSom(), pk = ses.thema+'-'+ses.L;
+  ses.q = q; ses.gezien.add(k);
+  S.recent = S.recent || {};
+  S.recent[pk] = [...(S.recent[pk]||[]).filter(x => x!==k), k].slice(-ONTHOUD);
+  bewaar();
+  ses.pog=0; ses.klaar=false;
   renderVraag();
 }
 function renderVraag(fb=''){
