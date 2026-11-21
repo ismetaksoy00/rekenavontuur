@@ -17,6 +17,7 @@
 :root{
   --paper:#EEF5EF; --card:#FFFFFF; --ink:#22304A; --muted:#5A6A82; --line:#D5E3D9; --soft:#F6FAF7;
   --plus:#F0603F; --min:#2B8FD6; --keer:#35A257; --deel:#8656D2; --breuk:#DC9A0E;
+  --komma:#0E9AA7; --procent:#E2557A; --klok:#5B6EE1; --reeks:#E07B39;
   --good:#24995F; --bad:#D9472F; --gold:#F5B82E; --gold-dark:#B9800C;
   --display:'Baloo 2','Trebuchet MS',system-ui,sans-serif;
   --body:'Nunito','Segoe UI',system-ui,sans-serif;
@@ -84,25 +85,6 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut
 .stem-row label{font-weight:800;min-width:4em}
 .stem-row select{font:inherit;padding:6px 10px;border-radius:10px;border:2px solid var(--line);background:var(--soft);color:var(--ink);max-width:100%;min-width:0}
 .stem-row .btn{font-size:.95rem;padding:8px 14px}
-.lvls{display:flex;gap:6px;align-items:center}
-.lv{width:42px;height:42px;border-radius:12px;border:2px solid var(--line);background:var(--soft);font-family:var(--display);font-weight:800;font-size:1.2rem;display:grid;place-items:center}
-.lv.on{background:var(--c);border-color:var(--c);color:#fff;box-shadow:0 3px 0 rgba(0,0,0,.15)}
-.lv[disabled]{opacity:.6;cursor:not-allowed}
-.lv svg{width:18px;height:18px}
-.lvl-info{font-size:.9rem;font-weight:700;color:var(--muted);line-height:1.3;min-height:2.6em}
-.steps{font-family:var(--display);font-weight:700;font-size:clamp(1.25rem,4vw,1.6rem);text-align:center;width:100%;font-variant-numeric:tabular-nums;display:flex;flex-direction:column;gap:2px}
-.steps b{color:var(--c)}
-.mab{display:flex;align-items:flex-end;gap:5px;flex-wrap:wrap;justify-content:center;max-width:100%}
-.rod{width:14px;height:100px;border-radius:4px;background:repeating-linear-gradient(to bottom,var(--d) 0 9px,rgba(255,255,255,.55) 9px 10px)}
-.units{display:flex;flex-direction:column-reverse;gap:1px}
-.unit{width:14px;height:9px;border-radius:2px;background:var(--d)}
-.gap{display:inline-block;min-width:1.1em;padding:0 .15em;border:4px dashed var(--c);border-radius:14px;color:var(--c);line-height:1.05;text-align:center}
-.badge{display:inline-block;background:var(--gold);color:var(--ink);font-family:var(--display);font-weight:800;font-size:.9rem;padding:2px 12px;border-radius:999px;margin-bottom:6px}
-.ans small{font-size:.5em;margin:0 .3em;opacity:.8}
-.ans.lang{font-size:clamp(1.4rem,4.5vw,2rem)}
-.rest{display:flex;align-items:center;gap:8px;font-weight:800;color:var(--muted)}
-.open-row{display:flex;gap:10px;align-items:center;font-weight:700;margin-top:12px}
-.open-row input{width:22px;height:22px;flex:none}
 .reset-row{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:12px}
 .reset-row .btn{font-size:.95rem;padding:8px 14px}
 
@@ -226,7 +208,7 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut
   *{animation:none!important;transition:none!important}
 }
 </style>
-<style>[hidden]{display:none!important} img{max-width:100%} body{margin:0}</style>
+<style>[hidden]{display:none!important} img{max-width:100%}</style>
 </head>
 <body>
 
@@ -271,7 +253,6 @@ th{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--mut
     <details class="parents">
       <summary>Voor ouders: voortgang</summary>
       <div class="table-wrap"><table id="stats"></table></div>
-      <label class="open-row" for="alles-open"><input type="checkbox" id="alles-open"> Alle niveaus openzetten (normaal gaat een niveau open na 8 van de 10 goed)</label>
       <h3 style="font-size:1.15rem;margin-top:16px">Voorleesstem</h3>
       <div id="stem-box"></div>
       <div class="reset-row" id="reset-row">
@@ -324,24 +305,28 @@ const THEMAS = [
   {id:'vermenigvuldigen', naam:'Keer-sommen', teken:'×', c:'var(--keer)', hex:'#35A257'},
   {id:'delen', naam:'Delen', teken:':', c:'var(--deel)', hex:'#8656D2'},
   {id:'breuken', naam:'Breuken', teken:'½', c:'var(--breuk)', hex:'#DC9A0E'},
+  {id:'decimalen', naam:'Komma-getallen', teken:',', c:'var(--komma)', hex:'#0E9AA7'},
+  {id:'procenten', naam:'Procenten', teken:'%', c:'var(--procent)', hex:'#E2557A'},
+  {id:'klok', naam:'Kloklezen', teken:'◔', c:'var(--klok)', hex:'#5B6EE1'},
+  {id:'reeksen', naam:'Reeksen', teken:'→', c:'var(--reeks)', hex:'#E07B39'},
 ];
 const T = id => THEMAS.find(t => t.id === id);
+const MAXLVL = 5; // elk thema heeft 5 niveaus
 
 const COIN = '<svg class="coin" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="13" fill="#F5B82E" stroke="#B9800C" stroke-width="2.5"/><circle cx="15" cy="15" r="8.5" fill="none" stroke="#FFE08A" stroke-width="2"/><path d="M15 9.5l1.6 3.4 3.7.4-2.8 2.5.8 3.6-3.3-1.9-3.3 1.9.8-3.6-2.8-2.5 3.7-.4z" fill="#FFF3C4"/></svg>';
 const STAR = on => `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.8-4.9 4.5 1.3 6.5L12 17l-5.9 3.3 1.3-6.5L2.5 9.3l6.6-.8z" fill="${on?'#F5B82E':'#D5E3D9'}" stroke="${on?'#B9800C':'#BFCFC4'}" stroke-width="1.5" stroke-linejoin="round"/></svg>`;
-const LOCK = '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2.5" fill="#5A6A82"/><path d="M8 11V8a4 4 0 0 1 8 0v3" fill="none" stroke="#5A6A82" stroke-width="2.5"/></svg>';
 const SPEAKER = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="#22304A"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="#22304A" stroke-width="2" stroke-linecap="round"/></svg>';
 
 /* ---------- Opslag ---------- */
 const KEY = 'rekenavontuur-v1';
 function nieuw(){
-  const niveau={}, max={}, stats={};
-  THEMAS.forEach(t => { niveau[t.id]=1; max[t.id]=1; stats[t.id]={goed:0,totaal:0}; });
-  return { naam:'', punten:20, gekocht:[], huid:0, haar:0, open:false, max, recent:{},
+  const niveau={}, stats={};
+  THEMAS.forEach(t => { niveau[t.id]=1; stats[t.id]={goed:0,totaal:0}; });
+  return { naam:'', punten:20, gekocht:[], huid:0, haar:0,
     aan:{achtergrond:'a-zacht', kapsel:'k-kort', shirt:'s-geel', hoofd:'h-geen', extra:'e-geen'},
     niveau, stats };
 }
-function laad(){ try{ const t=localStorage.getItem(KEY); if(t){ const o=JSON.parse(t); const n=nieuw(); const s={...n,...o, aan:{...n.aan,...o.aan}, niveau:{...n.niveau,...o.niveau}, max:{...n.max,...(o.max||{})}, stats:{...n.stats,...o.stats}}; THEMAS.forEach(th => { s.max[th.id]=Math.max(s.max[th.id], s.niveau[th.id]); }); return s; } }catch(e){} return nieuw(); }
+function laad(){ try{ const t=localStorage.getItem(KEY); if(t){ const o=JSON.parse(t); const n=nieuw(); return {...n,...o, aan:{...n.aan,...o.aan}, niveau:{...n.niveau,...o.niveau}, stats:{...n.stats,...o.stats}}; } }catch(e){} return nieuw(); }
 function bewaar(){ try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){} }
 let S = laad();
 
@@ -451,105 +436,95 @@ function lijn(from, to, on=[], start=null){
   for(let i=from; step>0 ? i<=to : i>=to; i+=step) out+=`<span class="chip${on.includes(i)?' on':''}${i===start?' start':''}">${i}</span>`;
   return out+'</div>';
 }
-function pie(n, k, col, size=150, extra=0, col2='#2B8FD6'){
+function pie(n, k, col, size=150){
   const r=60, cx=70, cy=70;
   let s=`<svg class="pie" viewBox="0 0 140 140" width="${size}" height="${size}" role="img" aria-label="${k} van de ${n} stukken gekleurd"><circle cx="70" cy="70" r="66" fill="#E6B877"/>`;
   for(let i=0;i<n;i++){
     const a0=-Math.PI/2+i*2*Math.PI/n, a1=a0+2*Math.PI/n;
     const x0=cx+r*Math.cos(a0), y0=cy+r*Math.sin(a0), x1=cx+r*Math.cos(a1), y1=cy+r*Math.sin(a1);
-    s+=`<path d="M${cx} ${cy} L${x0.toFixed(2)} ${y0.toFixed(2)} A${r} ${r} 0 0 1 ${x1.toFixed(2)} ${y1.toFixed(2)}Z" fill="${i<k?col:i<k+extra?col2:'#FFF4DA'}" stroke="#9A6424" stroke-width="3" stroke-linejoin="round"/>`;
+    s+=`<path d="M${cx} ${cy} L${x0.toFixed(2)} ${y0.toFixed(2)} A${r} ${r} 0 0 1 ${x1.toFixed(2)} ${y1.toFixed(2)}Z" fill="${i<k?col:'#FFF4DA'}" stroke="#9A6424" stroke-width="3" stroke-linejoin="round"/>`;
   }
   return s+'</svg>';
 }
 const frac = (k,n) => `<span class="frac"><span>${k}</span><span>${n}</span></span>`;
-const WOORD = ['nul','een','twee','drie','vier','vijf','zes','zeven','acht','negen','tien','elf','twaalf'];
+const WOORD = ['nul','een','twee','drie','vier','vijf','zes','zeven','acht','negen','tien','elf','twaalf','dertien','veertien','vijftien','zestien','zeventien','achttien','negentien','twintig'];
 function fracWoord(k,n){
   if(n===2) return k===1?'een half':`${WOORD[k]} halve`;
   if(n===4) return k===1?'een kwart':`${WOORD[k]} kwart`;
-  const d = {3:'derde',5:'vijfde',6:'zesde',8:'achtste',9:'negende',10:'tiende',12:'twaalfde'}[n] || n+'de';
+  const d = {3:'derde',5:'vijfde',6:'zesde',7:'zevende',8:'achtste',9:'negende',10:'tiende',12:'twaalfde'}[n] || n+'de';
   return `${WOORD[k]} ${d}`;
 }
 
-/* ---------- Hulpjes voor hogere niveaus ---------- */
-const stapjes = lines => '<div class="steps">'+lines.map(l=>`<div>${l}</div>`).join('')+'</div>';
-function staven(n, col){
-  const t=Math.floor(n/10), e=n%10;
-  let s=`<div class="mab" role="img" aria-label="${t} tientallen en ${e} losse">`;
-  for(let i=0;i<t;i++) s+=`<span class="rod" style="--d:${col}"></span>`;
-  if(e){ s+='<span class="units">'; for(let i=0;i<e;i++) s+=`<span class="unit" style="--d:${col}"></span>`; s+='</span>'; }
-  return s+'</div>';
+/* Reeks-chips en klok-plaatjes */
+function chipRow(arr){ return `<div class="line">${arr.map(t=>`<span class="chip${t==null?' start':''}">${t==null?'?':t}</span>`).join('')}</div>`; }
+const fmtT = (h,m) => `${((h-1)%12+12)%12+1}:${String(m).padStart(2,'0')}`;       // 12-uurs, bv. 3:05
+const fmtT24 = (h,m) => `${String(((h%24)+24)%24).padStart(2,'0')}:${String(m).padStart(2,'0')}`; // 24-uurs, bv. 15:05
+const duurFmt = m => { const u=Math.floor(m/60), r=m%60; if(u&&r) return `${u} uur ${r} min`; if(u) return `${u} uur`; return `${r} minuten`; };
+function klokSVG(h,m,size=180){
+  const cx=90, cy=90, R=84;
+  const hand=(deg,len,w,col='#22304A')=>{ const a=(deg-90)*Math.PI/180;
+    return `<line x1="${cx}" y1="${cy}" x2="${(cx+len*Math.cos(a)).toFixed(1)}" y2="${(cy+len*Math.sin(a)).toFixed(1)}" stroke="${col}" stroke-width="${w}" stroke-linecap="round"/>`; };
+  let s=`<svg class="pie" viewBox="0 0 180 180" width="${size}" height="${size}" role="img" aria-label="Analoge klok die ${fmtT(h,m)} aangeeft"><circle cx="90" cy="90" r="${R}" fill="#FFFFFF" stroke="#D5E3D9" stroke-width="6"/>`;
+  for(let i=1;i<=12;i++){
+    const a=(i*30-90)*Math.PI/180, x=cx+(R-18)*Math.cos(a), y=cy+(R-18)*Math.sin(a);
+    s+=`<text x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="middle" dominant-baseline="central" font-size="17" font-weight="800" fill="#5A6A82" font-family="'Baloo 2',sans-serif">${i}</text>`;
+  }
+  const mh=(m/60)*360, hh=(((h%12)+m/60)/12)*360;
+  s+=hand(mh,58,5,'#5B6EE1')+hand(hh,38,7)+`<circle cx="90" cy="90" r="6" fill="#22304A"/>`;
+  return s+'</svg>';
 }
-function groupsK(g, per, k, col){
-  let out='<div class="groups">';
-  for(let i=0;i<g;i++){ const c=i<k?col:'#B9C4D0'; out+=`<div class="grp" style="--d:${c}">`; for(let j=0;j<per;j++) out+=`<span class="dot" style="--d:${c}"></span>`; out+='</div>'; }
-  return out+'</div>';
-}
-function sprongen(t, n){ const v=[]; for(let i=1;i<=n;i++) v.push(i*t); return '<div class="line">'+v.map(x=>`<span class="chip on">${x}</span>`).join('')+'</div>'; }
-const GAP = '<span class="gap">?</span>';
-const OP = s => `<span class="op">${s}</span>`;
-const kans = p => Math.random() < p;
-const T10 = n => Math.floor(n/10)*10;
-const zeg = s => s.replace(/<[^>]+>/g,' ').replace(/−/g,' min ').replace(/\+/g,' plus ').replace(/×/g,' keer ')
-  .replace(/ : /g,' gedeeld door ').replace(/ \? /g,' wat ').replace(/=/g,' is ').replace(/\s+/g,' ').trim();
-const maxLvl = id => S.open ? 3 : Math.max(1, S.max[id]||1);
 
-/* ---------- Uitleg per thema (lvl = vanaf welk niveau de stap zichtbaar is) ---------- */
+/* ---------- Uitleg per thema (past zich aan het niveau aan) ---------- */
 const UITLEG = {
-  optellen: [
+  optellen: L => [
     {t:'Erbij doen', x:'Optellen betekent: je doet er iets bij. Je hebt 3 rode bolletjes. Je krijgt er 2 blauwe bij.',
-     v:()=>dots(3,'#F0603F')+OP('+')+dots(2,'#2B8FD6')},
+     v:()=>dots(3,'#F0603F')+'<span class="op">+</span>'+dots(2,'#2B8FD6')},
     {t:'Samen tellen', x:'Tel nu alles samen: 1, 2, 3, 4, 5. Dus 3 plus 2 is 5.',
      v:()=>'<div class="eq">3 + 2 = <b>5</b></div>'+dots(5,'#F0603F')},
     {t:'Slim doortellen', x:'Begin bij het grootste getal en tel verder. Bij 7 + 3 zeg je: 7. En dan 8, 9, 10!',
      v:()=>'<div class="eq">7 + 3 = <b>10</b></div>'+lijn(6,11,[8,9,10],7)},
-    {lvl:2, t:'Over de 10 heen', x:'Bij 8 + 5 maak je eerst 10. 8 + 2 = 10. Van de 5 heb je dan nog 3 over. 10 + 3 = 13.',
-     v:()=>dots(8,'#F0603F')+OP('+')+dots(5,'#2B8FD6')+stapjes(['8 + 2 = 10','10 + 3 = <b>13</b>'])},
-    {lvl:2, t:'Wat ontbreekt er?', x:'Bij 9 + ? = 15 tel je door van 9 tot 15. Dat zijn 6 stapjes. Dus op het vraagteken hoort 6.',
-     v:()=>`<div class="eq">9 + ${GAP} = 15</div>`+lijn(9,15,[10,11,12,13,14,15],9)},
-    {lvl:3, t:'Tientallen en losse', x:'Grote getallen bestaan uit tientallen en losse. 34 is 3 staven van 10 en 4 losse blokjes.',
-     v:()=>staven(34,'#F0603F')+'<div class="eq">34 = 30 + 4</div>'},
-    {lvl:3, t:'Slim splitsen', x:'Bij 47 + 38 doe je eerst de tientallen erbij: 47 + 30 = 77. Daarna de losse: 77 + 8 = 85.',
-     v:()=>'<div class="eq">47 + 38 = <b>85</b></div>'+stapjes(['47 + 30 = 77','77 + 8 = 85'])},
+    ...(L>=4 ? [{t:'Door de 100 heen', x:'Bij 245 + 67 tel je de eenheden, dan de tientallen, dan de honderden. 5 + 7 = 12: schrijf 2, en tel 1 mee bij de tientallen.',
+     v:()=>'<div class="eq">245 + 67 = <b>312</b></div>'}] : []),
+    ...(L>=5 ? [{t:'Grote getallen', x:'348 + 275: 8 + 5 = 13 (schrijf 3, 1 mee), 4 + 7 + 1 = 12 (schrijf 2, 1 mee), 3 + 2 + 1 = 6. Dus 623!',
+     v:()=>'<div class="eq">348 + 275 = <b>623</b></div>'}] : []),
   ],
-  aftrekken: [
+  aftrekken: L => [
     {t:'Eraf halen', x:'Aftrekken betekent: er gaat iets weg. Je hebt 6 koekjes en je eet er 2 op.',
      v:()=>dots(6,'#2B8FD6',2)},
     {t:'Wat blijft er over?', x:'Tel wat er nog over is: 4 koekjes. Dus 6 min 2 is 4.',
      v:()=>'<div class="eq">6 − 2 = <b>4</b></div>'+dots(4,'#2B8FD6')},
     {t:'Terugtellen', x:'Je kunt ook terugtellen. Bij 10 − 3 zeg je: 10. En dan 9, 8, 7!',
      v:()=>'<div class="eq">10 − 3 = <b>7</b></div>'+lijn(11,6,[9,8,7],10)},
-    {lvl:2, t:'Terug over de 10', x:'Bij 13 − 5 ga je eerst terug naar 10. 13 − 3 = 10. Van de 5 moet er dan nog 2 af. 10 − 2 = 8.',
-     v:()=>dots(13,'#2B8FD6',5)+stapjes(['13 − 3 = 10','10 − 2 = <b>8</b>'])},
-    {lvl:2, t:'Wat ging eraf?', x:'Bij 15 − ? = 9 tel je van 9 naar 15. Dat zijn 6 stapjes. Dus er ging 6 af.',
-     v:()=>`<div class="eq">15 − ${GAP} = 9</div>`+lijn(9,15,[10,11,12,13,14,15],9)},
-    {lvl:3, t:'Slim splitsen', x:'Bij 72 − 38 haal je eerst de tientallen eraf: 72 − 30 = 42. Daarna de losse: 42 − 8 = 34.',
-     v:()=>staven(72,'#2B8FD6')+'<div class="eq">72 − 38 = <b>34</b></div>'+stapjes(['72 − 30 = 42','42 − 8 = 34'])},
+    ...(L>=4 ? [{t:'Lenen', x:'Bij 52 − 27 lukt 2 − 7 niet. Leen 1 tiental: 12 − 7 = 5. En 4 − 2 = 2. Dus 25!',
+     v:()=>'<div class="eq">52 − 27 = <b>25</b></div>'}] : []),
+    ...(L>=5 ? [{t:'Grote getallen', x:'1000 − 375: leen waar het moet. 10 − 5 = 5, dan 9 − 7 = 2, dan 9 − 3 = 6. Antwoord: 625.',
+     v:()=>'<div class="eq">1000 − 375 = <b>625</b></div>'}] : []),
   ],
-  vermenigvuldigen: [
+  vermenigvuldigen: L => [
     {t:'Groepjes', x:'Keer-sommen gaan over groepjes die even groot zijn. Hier zie je 3 zakjes met in elk zakje 4 snoepjes.',
      v:()=>groups(3,4,'#35A257')},
     {t:'Groepjes optellen', x:'Tel de groepjes bij elkaar op: 4 + 4 + 4 = 12. Dus 3 keer 4 is 12.',
      v:()=>'<div class="eq">4 + 4 + 4 = <b>12</b></div><div class="eq">3 × 4 = <b>12</b></div>'},
     {t:'Sprongen maken', x:'De tafel van 2 is springen met 2: 2, 4, 6, 8, 10. Zo leer je de tafels!',
      v:()=>lijn(1,10,[2,4,6,8,10])},
-    {lvl:2, t:'Het vraagteken', x:'Bij ? × 5 = 30 spring je met 5 tot je bij 30 bent. Dat zijn 6 sprongen. Dus 6 × 5 = 30.',
-     v:()=>`<div class="eq">${GAP} × 5 = 30</div>`+sprongen(5,6)},
-    {lvl:3, t:'Lastige tafels splitsen', x:'Weet je 7 × 6 niet meteen? Splits hem! 5 × 6 = 30. Dan nog 2 × 6 = 12. Samen is dat 42.',
-     v:()=>groupsK(7,6,5,'#35A257')+stapjes(['5 × 6 = 30','2 × 6 = 12','30 + 12 = <b>42</b>'])},
+    ...(L>=4 ? [{t:'Splitsen helpt', x:'12 × 8 is lastig? Reken 10 × 8 = 80 en 2 × 8 = 16. Samen is dat 96!',
+     v:()=>'<div class="eq">10 × 8 = 80</div><div class="eq">2 × 8 = 16</div><div class="eq">12 × 8 = <b>96</b></div>'}] : []),
+    ...(L>=5 ? [{t:'Twee cijfers keer één cijfer', x:'24 × 3: reken 20 × 3 = 60 en 4 × 3 = 12. Samen 72!',
+     v:()=>'<div class="eq">24 × 3 = <b>72</b></div>'}] : []),
   ],
-  delen: [
+  delen: L => [
     {t:'Eerlijk verdelen', x:'Delen is eerlijk verdelen. Er zijn 12 snoepjes en 3 kinderen. Iedereen moet evenveel krijgen.',
      v:()=>dots(12,'#8656D2')},
     {t:'Om de beurt', x:'Geef ieder kind om de beurt een snoepje. Iedereen krijgt er 4. Dus 12 gedeeld door 3 is 4.',
      v:()=>groups(3,4,'#8656D2')+'<div class="eq">12 : 3 = <b>4</b></div>'},
     {t:'Tafels helpen', x:'Delen is een keer-som andersom. Je weet: 3 × 4 = 12. Dus 12 : 3 = 4.',
      v:()=>'<div class="eq">3 × 4 = 12</div><div class="eq">12 : 3 = <b>4</b></div>'},
-    {lvl:2, t:'Andersom denken', x:'Bij 24 : 4 vraag je: hoeveel keer 4 is 24? Spring met 4: 4, 8, 12, 16, 20, 24. Dat zijn 6 sprongen. Dus 24 : 4 = 6.',
-     v:()=>'<div class="eq">24 : 4 = <b>6</b></div>'+sprongen(4,6)},
-    {lvl:3, t:'Er blijft iets over', x:'14 snoepjes voor 4 kinderen. Ieder kind krijgt er 3. Dan heb je er 12 uitgedeeld en blijven er 2 over. Dat heet de rest: 14 : 4 = 3 rest 2.',
-     v:()=>groups(4,3,'#8656D2')+'<div class="rest">'+dots(2,'#B9C4D0')+'<span>over</span></div><div class="eq">14 : 4 = <b>3 rest 2</b></div>'},
+    ...(L>=4 ? [{t:'Delen met rest', x:'17 : 5 gaat niet precies. 5 × 3 = 15 en 17 − 15 = 2. Dus 17 : 5 = 3 rest 2!',
+     v:()=>'<div class="eq">17 : 5 = <b>3 rest 2</b></div>'}] : []),
+    ...(L>=5 ? [{t:'Grote deling', x:'144 : 12 = 12, want 12 × 12 = 144. Ken je de tafel van 12? Dan gaat dit vlot!',
+     v:()=>'<div class="eq">144 : 12 = <b>12</b></div>'}] : []),
   ],
-  breuken: [
+  breuken: L => [
     {t:'In stukjes', x:'Een breuk is een stukje van iets heels. Deze pizza is in 2 even grote stukken gesneden. Eén stuk is een half.',
      v:()=>pie(2,1,'#DC9A0E')+`<div class="eq">${frac(1,2)}</div>`},
     {t:'Een kwart', x:'Snijd je de pizza in 4 even grote stukken? Dan is één stuk een kwart.',
@@ -558,218 +533,519 @@ const UITLEG = {
      v:()=>pie(4,3,'#DC9A0E')+`<div class="eq">${frac(3,4)}</div>`},
     {t:'De helft van', x:'De helft van 8 is 4. Je verdeelt 8 in 2 even grote groepjes.',
      v:()=>groups(2,4,'#DC9A0E')+'<div class="eq">de helft van 8 = <b>4</b></div>'},
-    {lvl:2, t:'Groter of kleiner?', x:'Hoe meer stukken je snijdt, hoe kleiner elk stuk wordt. Een kwart is dus kleiner dan een half.',
-     v:()=>pie(2,1,'#DC9A0E',130)+pie(4,1,'#2B8FD6',130)+`<div class="eq">${frac(1,2)} is groter dan ${frac(1,4)}</div>`},
-    {lvl:3, t:'Drie kwart van 12', x:'Bij drie kwart van 12 verdeel je 12 eerst in 4 groepjes. In elk groepje zitten 3. Pak er 3 groepjes van: dat is 9.',
-     v:()=>groupsK(4,3,3,'#DC9A0E')+stapjes(['12 : 4 = 3','3 × 3 = <b>9</b>'])},
-    {lvl:3, t:'Even groot', x:'Twee kwart is net zoveel pizza als een half. Deze breuken zijn even groot.',
-     v:()=>pie(2,1,'#DC9A0E',130)+OP('=')+pie(4,2,'#2B8FD6',130)+`<div class="eq">${frac(1,2)} = ${frac(2,4)}</div>`},
-    {lvl:3, t:'Breuken optellen', x:'Bij een kwart plus twee kwart blijft het getal onder de streep hetzelfde. Je telt alleen de stukken op: 1 + 2 = 3. Dus drie kwart.',
-     v:()=>pie(4,1,'#DC9A0E',150,2)+`<div class="eq">${frac(1,4)} + ${frac(2,4)} = ${frac(3,4)}</div>`},
+    ...(L>=4 ? [{t:'Gelijknamig maken', x:'1/2 + 1/4: maak van 1/2 een 2/4. Dan tel je de tellers op: 2/4 + 1/4 = 3/4.',
+     v:()=>`<div class="eq">${frac(2,4)} + ${frac(1,4)} = <b>${frac(3,4)}</b></div>`}] : []),
+    ...(L>=5 ? [{t:'Rekenen en vergelijken', x:'2/3 = 8/12 en 3/4 = 9/12, dus 3/4 is groter. En 1/2 + 1/3 = 3/6 + 2/6 = 5/6.',
+     v:()=>`<div class="eq">${frac(1,2)} + ${frac(1,3)} = <b>${frac(5,6)}</b></div>`}] : []),
+  ],
+  decimalen: L => [
+    {t:'De komma', x:'Bij kommagetallen staat de komma tussen de helen en de stukken erachter. 1,5 is 1 heel en 5 tienden. 0,25 is 25 honderdsten.',
+     v:()=>'<div class="eq">1<b>,</b>5 = 1 + 0,5</div><div class="eq">0<b>,</b>25 = 25/100</div>'},
+    {t:'Reken met geld', x:'Met euro\'s reken je met twee cijfers achter de komma. €2,50 + €1,75: tel de centen (250 + 175 = 425) → €4,25.',
+     v:()=>'<div class="eq">€2,50 + €1,75 = <b>€4,25</b></div>'},
+    {t:'Keer 10 en delen door 10', x:'× 10 schuift de komma één plek naar rechts, : 10 naar links. 0,4 × 10 = 4. 3,5 : 10 = 0,35.',
+     v:()=>'<div class="eq">0,4 × 10 = <b>4</b></div><div class="eq">3,5 : 10 = <b>0,35</b></div>'},
+    ...(L>=4 ? [{t:'Wisselgeld', x:'Je koopt iets van €6,75 en betaalt met €10,00. Hoeveel krijg je terug? 10,00 − 6,75 = 3,25. Leen een euro als de centen niet lukken!',
+     v:()=>'<div class="eq">€10,00 − €6,75 = <b>€3,25</b></div>'}] : []),
+    ...(L>=5 ? [{t:'Komma keer komma', x:'0,5 × 0,4: reken 5 × 4 = 20. Er staan 1 + 1 = 2 cijfers achter de komma, dus 0,20 = 0,2.',
+     v:()=>'<div class="eq">0,5 × 0,4 = <b>0,2</b></div>'}] : []),
+  ],
+  procenten: L => [
+    {t:'Procent is per honderd', x:'% betekent "per 100". 100% is alles, 50% is de helft, 10% is een tiende deel.',
+     v:()=>pie(10,1,'#E2557A',130)+'<div class="eq">10% = <b>1 van de 10</b> stukken</div>'},
+    {t:'Zo reken je het uit', x:'10% van 40: deel 40 door 10, dat is 4. 50% van 20: deel 20 door 2, dat is 10.',
+     v:()=>'<div class="eq">10% van 40 = 40 : 10 = <b>4</b></div><div class="eq">50% van 20 = 20 : 2 = <b>10</b></div>'},
+    {t:'Korting', x:'Bij 20% korting betaal je nog 80% van de prijs. Een tas van €50 met 20% korting kost €40.',
+     v:()=>'<div class="eq">€50 − 20% = <b>€40</b></div>'},
+    ...(L>=3 ? [{t:'Hoeveel procent was goed?', x:'Van de 10 sommen waren er 8 goed. 8 : 10 = 0,8, dus 80%. Doe het daarna × 100!',
+     v:()=>'<div class="eq">8 : 10 × 100 = <b>80%</b></div>'}] : []),
+    ...(L>=4 ? [{t:'Twee stappen achter elkaar', x:'Eerst 10% korting op €40 (dat is €36), dan nog €4 eraf: €32. Reken van links naar rechts.',
+     v:()=>'<div class="eq">€40 − 10% − €4 = <b>€32</b></div>'}] : []),
+    ...(L>=5 ? [{t:'Omdraaien en op-en-neer', x:'Na 20% korting kost iets €80: de oude prijs was 80 : 0,8 = €100. En €100 eerst +10% en dan −10% is €99, geen €100!',
+     v:()=>'<div class="eq">€100 → +10% → €110 → −10% → <b>€99</b></div>'}] : []),
+  ],
+  klok: L => [
+    {t:'De twee wijzers', x:'De korte wijzer is het uur. De lange wijzer zijn de minuten. Staat de lange wijzer op de 12? Dan is het een heel uur.',
+     v:()=>klokSVG(3,0,150)+'<div class="eq"><b>3:00</b></div>'},
+    ...(L>=2 ? [{t:'Half en kwart', x:'Op de 6 staat de lange wijzer: half. Op de 3: kwart over. Op de 9: kwart voor. 5:30 noem je "half 6".',
+     v:()=>klokSVG(5,30,130)+klokSVG(6,15,130)}] : []),
+    ...(L>=3 ? [{t:'Minuten tellen', x:'Elk cijfer op de klok is 5 minuten. Staat de wijzer op de 4? Dan zijn het 20 minuten. Op de 11? 55 minuten.',
+     v:()=>klokSVG(8,20,150)+'<div class="eq"><b>8:20</b></div>'}] : []),
+    ...(L>=4 ? [{t:'Hoelang duurt het?', x:'Van 14:00 tot 15:30: eerst de uren (1 uur), dan de minuten (30). Samen 1 uur 30 minuten.',
+     v:()=>'<div class="eq">15:30 − 14:00 = <b>1 uur 30 min</b></div>'}] : []),
+    ...(L>=5 ? [{t:'Hoe laat ben je klaar?', x:'Je start om 9:45 en doet er 3 uur over. 9:45 + 3 uur = 12:45. Na 12 uur begint de teller opnieuw!',
+     v:()=>'<div class="eq">9:45 + 3 uur = <b>12:45</b></div>'}] : []),
+  ],
+  reeksen: L => [
+    {t:'Zoek de regel', x:'In een reeks verandert er steeds hetzelfde. In 4, 6, 8 komt er steeds 2 bij.',
+     v:()=>chipRow([4,6,8,null])},
+    {t:'Tel gewoon verder', x:'4, 6, 8, 10, 12... Ga door met dezelfde stap. Welk getal komt na 10? Precies: 12!',
+     v:()=>chipRow([4,6,8,10])+'<div class="eq">verder: <b>12</b></div>'},
+    ...(L>=2 ? [{t:'Soms is het keer', x:'Soms is de regel "keer 2" of "keer 3": 3, 6, 12, 24, 48. Groeit het heel snel? Dan is het vast keer!',
+     v:()=>chipRow([3,6,12,24])+'<div class="eq">verder: <b>48</b></div>'}] : []),
+    ...(L>=4 ? [{t:'Het vraagteken in het midden', x:'Soms staat het vraagteken in het midden, zoals in 5, 10, ?, 20, 25. Tel vanaf links verder: 15!',
+     v:()=>chipRow([5,10,null,20,25])}] : []),
+    ...(L>=5 ? [{t:'Past alles wel?', x:'Soms zit er één getal tussen dat niet past. En soms tel je de twee vorige getallen op: 1, 1, 2, 3, 5, 8...',
+     v:()=>chipRow([1,1,2,3,5,null])}] : []),
   ],
 };
 
-const NIVEAU_INFO = {
-  optellen: ['Sommen tot 10','Tot 20, over de 10 heen','Tot 100 met splitsen'],
-  aftrekken: ['Sommen tot 10','Tot 20, terug over de 10','Tot 100 met splitsen'],
-  vermenigvuldigen: ['Tafels van 1, 2 en 10','Tafels van 2 t/m 5 en 10','Alle tafels, ook 6 t/m 9'],
-  delen: ['Delen door 2 en 10','Delen met tafels t/m 5','Alle tafels, ook met rest'],
-  breuken: ['Pizza in stukken','Helft, kwart en vergelijken','Drie kwart van, even groot, optellen'],
-};
-const PUNTEN = [10,15,20];
-
 /* ---------- Sommen maken ---------- */
-function numOpties(ans, extra=[]){
+const r2 = n => Math.round(n*100)/100;
+const fmtK = n => String(r2(n)).replace('.',',');       // 2.5 -> "2,5"
+const gcd = (a,b) => b ? gcd(b, a%b) : a;
+function numOpties(ans, fmt=String, dec=false){
   const set = new Set([ans]);
-  extra.forEach(x => { if(set.size<3 && x>=0) set.add(x); });
-  const d = ans>=20 ? shuffle([1,-1,10,-10,2,-2]).concat([9,11,-9,-11,3,-3,20])
-                    : shuffle([1,-1,2,-2,3]).concat([10,-10,4,-4,5,-5,6,7,8]);
-  for(const x of d){ if(set.size>=4) break; if(ans+x>=0) set.add(ans+x); }
-  return shuffle([...set]).map(v => ({key:String(v), html:String(v)}));
+  const base = dec
+    ? (ans<1 ? [.01,-.01,.02,-.02,.05,-.05,.1,-.1,.2,-.2,.5,1] : [.1,-.1,.2,-.2,.5,-.5,1,-1,2,-2,.3,-.3,3,-3])
+    : ans>=1000 ? [100,-100,10,-10,50,-50,200,-200]
+    : ans>=100 ? [10,-10,100,-100,1,-1,20,-20,5,-5]
+    : ans>=50 ? [10,-10,5,-5,20,-20,1,-1]
+    : [1,-1,2,-2,3,-3,10,-10,4,-4,5,-5];
+  for(const x of shuffle(base)){ if(set.size>=4) break; const v = dec ? r2(ans+x) : ans+x; if(v>=0 && !set.has(v)) set.add(v); }
+  return shuffle([...set]).map(v => ({key:String(v), html:fmt(v)}));
 }
-function fracOpties(goed, fouten){
-  const val = ([a,b]) => a/b, seen = new Set([goed.join('/')]), out=[goed];
-  for(const f of fouten){
-    if(out.length>=4) break;
-    const [a,b]=f, k=a+'/'+b;
-    if(a<1 || a>=b || seen.has(k) || Math.abs(val(f)-val(goed))<1e-9) continue;
-    seen.add(k); out.push(f);
-  }
-  return shuffle(out).map(([a,b]) => ({key:`${a}/${b}`, html:frac(a,b)}));
+function restOpties(q,r){
+  const set = new Set([`${q} rest ${r}`]);
+  const c = [[q+1,r],[q-1,r],[q,r+1],[q,r-1],[q+1,r+1],[q-1,r-1],[q,r+2],[q+2,r]];
+  for(const [a,b] of shuffle(c)){ if(set.size>=4) break; if(a>=0 && b>=0){ const s=`${a} rest ${b}`; if(!set.has(s)) set.add(s); } }
+  return shuffle([...set]).map(s => ({key:s, html:s}));
 }
-const DINGEN = ['ballonnen','stickers','knikkers','appels','schelpen','kralen'];
-function plusSom(a,b,hint,uitleg,storyKans){
-  const ans=a+b;
-  if(kans(storyKans)){ const d=pick(DINGEN), t=`Je hebt ${a} ${d}. Je krijgt er ${b} bij. Hoeveel ${d} heb je nu?`;
-    return {vraag:t, story:true, spreek:t, antwoord:String(ans), opties:numOpties(ans), hint, uitleg}; }
-  return {vraag:`${a} + ${b} = ?`, spreek:`Hoeveel is ${a} plus ${b}?`, antwoord:String(ans), opties:numOpties(ans), hint, uitleg};
+function fracOpties(pairs){
+  const seen = new Set(), out = [];
+  for(const [a,b] of shuffle(pairs)){ const k=`${a}/${b}`; if(!seen.has(k)){ seen.add(k); out.push({key:k, html:frac(a,b)}); } }
+  return shuffle(out).slice(0,4);
 }
-function minSom(a,b,hint,uitleg,storyKans){
-  const ans=a-b;
-  if(kans(storyKans)){ const d=pick(DINGEN), t=`Je hebt ${a} ${d}. Je geeft er ${b} weg. Hoeveel heb je er nog?`;
-    return {vraag:t, story:true, spreek:t, antwoord:String(ans), opties:numOpties(ans), hint, uitleg}; }
-  return {vraag:`${a} − ${b} = ?`, spreek:`Hoeveel is ${a} min ${b}?`, antwoord:String(ans), opties:numOpties(ans), hint, uitleg};
+function tijdOpties(h,m){
+  const set = new Set([fmtT(h,m)]);
+  const c = [[h+1,m],[h-1,m],[h,m+30],[h,m-30],[h+2,m],[h+1,m+30],[h-1,m+30]];
+  for(const [a,b] of shuffle(c)){ if(set.size>=4) break; const s = fmtT(a, ((b%60)+60)%60); if(!set.has(s)) set.add(s); }
+  return shuffle([...set]).map(s => ({key:s, html:s}));
 }
-const gatSom = (vraag, spreekT, ans, hint, uitleg) => ({vraag, spreek:spreekT, antwoord:String(ans), opties:numOpties(ans), hint, uitleg});
+function tijdOpties24(h,m){
+  const set = new Set([fmtT24(h,m)]);
+  const c = [[h+1,m],[h-1,m],[h,m+30],[h,m-30],[h+2,m],[h,m+15],[h+1,m+30],[h-2,m]];
+  for(const [a,b] of shuffle(c)){ if(set.size>=4) break; const s = fmtT24((((a%24)+24)%24), (((b%60)+60)%60)); if(!set.has(s)) set.add(s); }
+  return shuffle([...set]).map(s => ({key:s, html:s}));
+}
+function duurOpties(min){
+  const set = new Set([min]);
+  for(const d of shuffle([15,-15,30,-30,60,-60,10,-10,45,-45])){ if(set.size>=4) break; const v=min+d; if(v>0 && !set.has(v)) set.add(v); }
+  return shuffle([...set]).map(v => ({key:String(v), html:duurFmt(v)}));
+}
+const DINGEN = ['ballonnen','stickers','knikkers','appels','schelpen','kralen','knutsels','tekeningen','chocolaatjes','plantjes'];
+const KLEDING = ['tas','boek','speelgoed','jas','schoenen','rugzak'];
 
 const GEN = {
   optellen(L){
-    const A='#F0603F', B='#2B8FD6';
-    if(L===1){ const a=rnd(1,9), b=rnd(1,10-a); return plusSom(a,b, dots(a,A)+OP('+')+dots(b,B), `${a} + ${b} = ${a+b}`, .3); }
-    if(L===2){
-      const soort=pick(['over','over','over','gat','tot20']);
-      if(soort==='gat'){ const tot=rnd(11,20), a=rnd(Math.max(2,tot-9), tot-1), x=tot-a;
-        return gatSom(`${a} + ${GAP} = ${tot}`, `${a} plus wat is ${tot}?`, x, lijn(a,tot,[],a), `${a} + ${x} = ${tot}`); }
-      if(soort==='tot20'){ const a=rnd(11,18), b=rnd(1,19-a);
-        return plusSom(a,b, dots(a,A)+OP('+')+dots(b,B), `${a} + ${b} = ${a+b}`, .25); }
-      const a=rnd(3,9), b=rnd(11-a,9), n=10-a, r=b-n;
-      return plusSom(a,b, dots(a,A)+OP('+')+dots(b,B)+stapjes([`${a} + ${n} = 10`,`10 + ${r} = ${a+b}`]), `${a} + ${n} = 10, en 10 + ${r} = ${a+b}`, .25);
+    const max=[10,20,50,200,1000][L-1];
+    const a=rnd(L>=4? Math.floor(max/4) : 1, max-1), b=rnd(1, max-a), ans=a+b;
+    const v = ans<=20 ? dots(a,'#F0603F')+'<span class="op">+</span>'+dots(b,'#2B8FD6') : lijn(a, a+Math.min(b,6), [], a);
+    if(Math.random()<.3){
+      const d=pick(DINGEN);
+      return {vraag:`Je hebt ${a} ${d}. Je krijgt er ${b} bij. Hoeveel ${d} heb je nu?`, story:true,
+        spreek:`Je hebt ${a} ${d}. Je krijgt er ${b} bij. Hoeveel ${d} heb je nu?`, antwoord:String(ans), opties:numOpties(ans), hint:v, uitleg:`${a} + ${b} = ${ans}`};
     }
-    const soort=pick(['zonder','over','over','tien','gat','drie']);
-    if(soort==='tien'){ const a=rnd(1,8)*10, b=rnd(1,(100-a)/10)*10;
-      return plusSom(a,b, staven(a,A)+OP('+')+staven(b,B), `${a/10} tientallen + ${b/10} tientallen = ${(a+b)/10} tientallen`, .15); }
-    if(soort==='drie'){ const a=rnd(2,8), c=10-a, b=rnd(3,9), ans=a+b+c;
-      return {vraag:`${a} + ${b} + ${c} = ?`, spreek:`Hoeveel is ${a} plus ${b} plus ${c}?`, antwoord:String(ans), opties:numOpties(ans),
-        hint:stapjes([`Zoek eerst de 10: ${a} + ${c} = 10`,`10 + ${b} = ${ans}`]), uitleg:`${a} + ${c} = 10, en 10 + ${b} = ${ans}`}; }
-    if(soort==='gat'){
-      const tot=rnd(4,10)*10; let a; do{ a=rnd(tot-38, tot-3); }while(a%10===0 || a<11);
-      const x=tot-a, v=T10(a)+10, lines=[`${a} + ${v-a} = ${v}`];
-      if(tot>v){ lines.push(`${v} + ${tot-v} = ${tot}`); lines.push(`${v-a} + ${tot-v} = ${x}`); }
-      return gatSom(`${a} + ${GAP} = ${tot}`, `${a} plus wat is ${tot}?`, x, stapjes(lines), `${a} + ${x} = ${tot}`);
-    }
-    let a,b,i=0;
-    do{ a=rnd(12,79); b=rnd(11,99-a); i++; }
-    while(i<300 && (a%10===0 || b%10===0 || (soort==='zonder' ? a%10+b%10>9 : a%10+b%10<10)));
-    const tb=T10(b), e=b%10;
-    return plusSom(a,b, staven(a,A)+OP('+')+staven(b,B)+stapjes([`${a} + ${tb} = ${a+tb}`,`${a+tb} + ${e} = ${a+b}`]),
-      `${a} + ${tb} = ${a+tb}, en ${a+tb} + ${e} = ${a+b}`, .2);
+    return {vraag:`${a} + ${b} = ?`, spreek:`Hoeveel is ${a} plus ${b}?`, antwoord:String(ans), opties:numOpties(ans), hint:v, uitleg:`${a} + ${b} = ${ans}`};
   },
   aftrekken(L){
-    const C='#2B8FD6';
-    if(L===1){ const a=rnd(3,10), b=rnd(1,a-1); return minSom(a,b, dots(a,C,b), `${a} − ${b} = ${a-b}`, .3); }
-    if(L===2){
-      const soort=pick(['over','over','over','gat','tot20']);
-      if(soort==='gat'){ const a=rnd(11,20), c=rnd(Math.max(1,a-9), a-2), x=a-c;
-        return gatSom(`${a} − ${GAP} = ${c}`, `${a} min wat is ${c}?`, x, lijn(c,a,[],c), `${a} − ${x} = ${c}`); }
-      if(soort==='tot20'){ const a=rnd(12,19), b=rnd(1,a-10);
-        return minSom(a,b, dots(a,C,b), `${a} − ${b} = ${a-b}`, .25); }
-      const a=rnd(11,18), e=a-10, b=rnd(e+1,9), r=b-e;
-      return minSom(a,b, dots(a,C,b)+stapjes([`${a} − ${e} = 10`,`10 − ${r} = ${a-b}`]), `${a} − ${e} = 10, en 10 − ${r} = ${a-b}`, .25);
+    const max=[10,20,50,200,1000][L-1];
+    const a=rnd(L>=4? Math.floor(max/3) : 3, max), b=rnd(1, a-1), ans=a-b;
+    const v = a<=20 ? dots(a,'#2B8FD6',b) : lijn(a, a-Math.min(b,6), [], a);
+    if(Math.random()<.3){
+      const d=pick(DINGEN);
+      return {vraag:`Je hebt ${a} ${d}. Je geeft er ${b} weg. Hoeveel heb je er nog?`, story:true,
+        spreek:`Je hebt ${a} ${d}. Je geeft er ${b} weg. Hoeveel heb je er nog?`, antwoord:String(ans), opties:numOpties(ans), hint:v, uitleg:`${a} − ${b} = ${ans}`};
     }
-    const soort=pick(['zonder','over','over','tien','gat']);
-    if(soort==='tien'){ const a=rnd(3,10)*10, b=rnd(1,a/10-1)*10;
-      return minSom(a,b, staven(a,C), `${a/10} tientallen − ${b/10} tientallen = ${(a-b)/10} tientallen`, .15); }
-    if(soort==='gat'){
-      const a=rnd(4,10)*10; let c; do{ c=rnd(11,a-5); }while(c%10===0);
-      const x=a-c, v=T10(c)+10, lines=[`Tel op van ${c} naar ${a}:`, `${c} + ${v-c} = ${v}`];
-      if(a>v) lines.push(`${v} + ${a-v} = ${a}`);
-      return gatSom(`${a} − ${GAP} = ${c}`, `${a} min wat is ${c}?`, x, stapjes(lines), `${a} − ${x} = ${c}`);
-    }
-    let a,b,i=0;
-    do{ a=rnd(31,99); b=rnd(11,a-10); i++; }
-    while(i<300 && (b%10===0 || (soort==='zonder' ? b%10>a%10 : b%10<=a%10)));
-    const tb=T10(b), e=b%10;
-    return minSom(a,b, staven(a,C)+stapjes([`${a} − ${tb} = ${a-tb}`,`${a-tb} − ${e} = ${a-b}`]),
-      `${a} − ${tb} = ${a-tb}, en ${a-tb} − ${e} = ${a-b}`, .2);
+    return {vraag:`${a} − ${b} = ?`, spreek:`Hoeveel is ${a} min ${b}?`, antwoord:String(ans), opties:numOpties(ans), hint:v, uitleg:`${a} − ${b} = ${ans}`};
   },
   vermenigvuldigen(L){
-    const G='#35A257';
-    const t=pick([[1,2,10],[2,3,4,5,10],[2,5,3,4,6,7,8,9,6,7,8,9]][L-1]);
-    const f=rnd(L===1?1:2, 10), ans=f*t;
-    const hint = (f<=6 && ans<=30) ? groups(f,t,G)
-      : (L===3 && f>5) ? stapjes([`5 × ${t} = ${5*t}`,`${f-5} × ${t} = ${(f-5)*t}`,`${5*t} + ${(f-5)*t} = ${ans}`])
-      : sprongen(t,f);
-    if(L>1 && kans(.25)) return gatSom(`${GAP} × ${t} = ${ans}`, `Hoeveel keer ${t} is ${ans}?`, f, sprongen(t,f), `${f} × ${t} = ${ans}`);
-    if(L>1 && kans(.25)){
-      const [mv,elk,ding]=pick([['doosjes','elk doosje','eieren'],['zakjes','elk zakje','snoepjes'],['vazen','elke vaas','bloemen'],['bakjes','elk bakje','aardbeien']]);
-      const v=`Er zijn ${f} ${mv}. In ${elk} zitten ${t} ${ding}. Hoeveel ${ding} zijn er samen?`;
-      return {vraag:v, story:true, spreek:v, antwoord:String(ans), opties:numOpties(ans), hint, uitleg:`${f} × ${t} = ${ans}`};
+    if(L>=5 && Math.random()<.4){
+      // twee cijfers × één cijfer, gesplitst
+      const a=rnd(11,49), t=pick([2,3,4,5]), ans=a*t;
+      const t20=Math.floor(a/10)*10, rest=a-t20;
+      return {vraag:`${a} × ${t} = ?`, spreek:`Hoeveel is ${a} keer ${t}?`, antwoord:String(ans), opties:numOpties(ans),
+        hint:`<div class="eq">${t20} × ${t} = ${t20*t}</div><div class="eq">${rest} × ${t} = ${rest*t}</div><div style="width:100%;text-align:center;font-weight:700">Tel ze daarna bij elkaar op!</div>`,
+        uitleg:`${a} × ${t} = ${t20*t} + ${rest*t} = ${ans}`};
     }
-    return {vraag:`${f} × ${t} = ?`, spreek:`Hoeveel is ${f} keer ${t}?`, antwoord:String(ans), opties:numOpties(ans), hint, uitleg:`${f} × ${t} = ${ans}`};
+    const t=pick(L===1?[1,2,10] : L===2?[2,5,10] : L===3?[2,3,4,5,10] : L===4?[2,3,4,5,6,7,8,9,10,12] : [3,4,6,7,8,9,11,12]);
+    const f=rnd(L>=4?2:1, L===1?5 : L<=3?10 : 12), ans=f*t;
+    let hint;
+    if(ans<=30) hint=groups(f,t,'#35A257');
+    else if(L<=3) hint=`<div class="eq">${Array(f).fill(t).join(' + ')} = ${ans}</div>`;
+    else hint=`<div class="eq">Reken eerst ${Math.ceil(f/2)} × ${t} = ${Math.ceil(f/2)*t}</div><div style="width:100%;text-align:center;font-weight:700">Doe dat ${f%2===0?'twee keer':'nog eens'} en tel de rest erbij.</div>`;
+    return {vraag:`${f} × ${t} = ?`, spreek:`Hoeveel is ${f} keer ${t}?`, antwoord:String(ans), opties:numOpties(ans), hint, uitleg:`${f} groepjes van ${t} = ${ans}`};
   },
   delen(L){
-    const P='#8656D2';
-    if(L===3 && kans(.35)){
-      const t=pick([3,4,5,6,7,8,9]), q=rnd(2,7), r=rnd(1,t-1), n=t*q+r;
-      const cand=[[q+1,r],[q, r+1<t ? r+1 : r-1],[q-1,r],[q,0],[q+1,0]];
-      const seen=new Set([q+'r'+r]), opts=[[q,r]];
-      for(const [a,b] of cand){ if(opts.length>=4) break; if(a<1||b<0) continue; const k=a+'r'+b; if(seen.has(k)) continue; seen.add(k); opts.push([a,b]); }
-      const vis = n<=40 ? groups(t,q,P)+'<div class="rest">'+dots(r,'#B9C4D0')+'<span>over</span></div>' : '';
-      const story=kans(.4);
-      const vraag = story ? `${n} stickers eerlijk verdelen over ${t} kinderen. Hoeveel krijgt ieder kind, en hoeveel blijven er over?` : `${n} : ${t} = ?`;
-      return {vraag, story, spreek: story ? vraag : `Hoeveel is ${n} gedeeld door ${t}? Let op: er blijft iets over.`, antwoord:q+'r'+r,
-        opties:shuffle(opts).map(([a,b])=>({key:a+'r'+b, html:`${a}<small>rest</small>${b}`})),
-        hint: vis+stapjes([`${t} × ${q} = ${t*q}`,`${n} − ${t*q} = ${r} over`]),
-        uitleg:`${n} : ${t} = ${q} rest ${r}, want ${t} × ${q} = ${t*q}`, uitlegSpreek:`${n} gedeeld door ${t} is ${q}, en er blijven ${r} over.`};
+    const metRest = L>=4 && Math.random()<(L===5?.5:.4);
+    const t=pick(L===1?[2,10] : L===2?[2,5,10] : L===3?[2,3,4,5] : L===4?[2,3,4,5,6,7,8,9] : [6,7,8,9,11,12]);
+    const q=rnd(2, L===1?5 : L<=3?10 : 12);
+    if(metRest){
+      const r=rnd(1,t-1), tot=t*q+r;
+      const v = tot<=30 ? dots(tot,'#8656D2',r) : `<div class="eq">${t} × ${q} = ${t*q}</div>`;
+      const verhaaltje = Math.random()<.4;
+      return {vraag: verhaaltje ? `${tot} snoepjes verdelen over ${t} kinderen. Hoeveel krijgt ieder kind, en hoeveel blijven er over?`
+                                : `${tot} : ${t} = ? rest ?`,
+        story:verhaaltje,
+        spreek: verhaaltje ? `${tot} snoepjes verdelen over ${t} kinderen. Hoeveel krijgt ieder kind, en hoeveel blijven er over?`
+                           : `Hoeveel is ${tot} gedeeld door ${t}, en wat blijft er over?`,
+        antwoord:`${q} rest ${r}`, opties:restOpties(q,r),
+        hint:v+`<div style="width:100%;text-align:center;font-weight:700">${t} × ${q} = ${t*q} · ${tot} − ${t*q} = ${r} over</div>`,
+        uitleg:`${tot} : ${t} = ${q} rest ${r}`};
     }
-    const t=pick([[2,10],[2,3,4,5,10],[3,4,6,7,8,9,6,7,8,9]][L-1]);
-    const q=rnd(1, 10), tot=t*q;
-    const hint = (tot<=30 && t<=6) ? groups(t,q,P) : stapjes([`Hoeveel keer ${t} is ${tot}?`])+sprongen(t,q);
-    if(L>1 && kans(.2)) return gatSom(`${tot} : ${GAP} = ${q}`, `${tot} gedeeld door wat is ${q}?`, t,
-      stapjes([`Hoeveel keer ${q} is ${tot}?`])+sprongen(q,t), `${tot} : ${t} = ${q}, want ${t} × ${q} = ${tot}`);
-    if(kans(.3) && tot<=40){
-      const v=`${tot} snoepjes eerlijk verdelen over ${t} kinderen. Hoeveel krijgt ieder kind?`;
-      return {vraag:v, story:true, spreek:v, antwoord:String(q), opties:numOpties(q), hint, uitleg:`${tot} : ${t} = ${q}`};
+    const tot=t*q;
+    const v = tot<=30 ? groups(t,q,'#8656D2') : `<div class="eq">${t} × ? = ${tot}</div>`;
+    if(Math.random()<.35 && tot<=40){
+      return {vraag:`${tot} snoepjes eerlijk verdelen over ${t} kinderen. Hoeveel krijgt ieder kind?`, story:true,
+        spreek:`${tot} snoepjes eerlijk verdelen over ${t} kinderen. Hoeveel krijgt ieder kind?`, antwoord:String(q), opties:numOpties(q), hint:v, uitleg:`${tot} : ${t} = ${q}`};
     }
-    return {vraag:`${tot} : ${t} = ?`, spreek:`Hoeveel is ${tot} gedeeld door ${t}?`, antwoord:String(q), opties:numOpties(q), hint, uitleg:`${tot} : ${t} = ${q}, want ${t} × ${q} = ${tot}`};
+    return {vraag:`${tot} : ${t} = ?`, spreek:`Hoeveel is ${tot} gedeeld door ${t}?`, antwoord:String(q), opties:numOpties(q), hint:v, uitleg:`${tot} : ${t} = ${q}, want ${t} × ${q} = ${tot}`};
   },
   breuken(L){
-    const Y='#DC9A0E', B='#2B8FD6';
-    const soort = pick([['pie','pie','kies','van'],['pie','van','van','groter'],['pie3','van3','van3','gelijk','gelijk','groter3','samen','samen']][L-1]);
-    if(soort==='pie' || soort==='pie3'){
-      const n=pick(soort==='pie3' ? [5,6,8,10,12] : L===1 ? [2,3,4] : [2,3,4,6]), k=rnd(1,n-1);
-      const zelfde=shuffle(Array.from({length:n-1},(_,i)=>[i+1,n]));
-      const ander=shuffle([[1,2],[1,3],[2,3],[1,4],[3,4],[1,5],[2,5],[1,6],[5,6],[1,8],[3,8],[1,10],[1,12]].filter(([a,b])=>b!==n));
-      return {vraag:pie(n,k,Y,170)+'<div style="width:100%">Welk deel is gekleurd?</div>', visualQ:true,
-        spreek:'Welk deel van de pizza is gekleurd?', antwoord:`${k}/${n}`, opties:fracOpties([k,n],[...zelfde.slice(0,3),[k,n+1],...ander]),
-        hint:'<div style="width:100%;text-align:center;font-weight:700">Tel alle stukken: dat is het getal onder de streep. Tel de gekleurde stukken: dat is het getal erboven.</div>',
-        uitleg:`${k} van de ${n} stukken = `+frac(k,n), uitlegSpreek:`${k} van de ${n} stukken. Dat is ${fracWoord(k,n)}.`};
-    }
-    if(soort==='kies'){
-      const pool=[[1,2],[1,3],[1,4],[2,3],[3,4]], [k,n]=pick(pool);
-      const andere=shuffle(pool.filter(([a,b])=>Math.abs(a/b-k/n)>1e-9)).slice(0,3);
-      return {vraag:`Welke pizza laat ${frac(k,n)} zien?`, story:true, spreek:`Welke pizza laat ${fracWoord(k,n)} zien?`, antwoord:`${k}/${n}`,
-        opties:shuffle([[k,n],...andere]).map(([a,b])=>({key:`${a}/${b}`, html:pie(b,a,Y,72)})),
-        hint:`<div style="width:100%;text-align:center;font-weight:700">Het getal onder de streep: in zoveel stukken is de pizza gesneden. Het getal erboven: zoveel stukken zijn gekleurd.</div>`,
-        uitleg:`${frac(k,n)} is ${k} van de ${n} stukken`, uitlegSpreek:`${fracWoord(k,n)} is ${k} van de ${n} stukken.`};
-    }
-    if(soort==='van'){
-      const n=L===1 ? 2 : pick([2,2,4,3]), per=rnd(1,L===1?5:6), tot=n*per;
-      const naam = n===2?'de helft':n===4?'een kwart':'een derde';
-      return {vraag:`Hoeveel is ${naam} van ${tot}?`, story:true, spreek:`Hoeveel is ${naam} van ${tot}?`,
-        antwoord:String(per), opties:numOpties(per), hint:groups(n,per,Y), uitleg:`${tot} verdelen in ${n} groepjes: ${per} in elk groepje`};
-    }
-    if(soort==='van3'){
-      const n=pick([3,4,5]), per=rnd(2,5), k=rnd(2,n-1), tot=n*per, ans=k*per;
-      return {vraag:`Hoeveel is ${frac(k,n)} van ${tot}?`, story:true, spreek:`Hoeveel is ${fracWoord(k,n)} van ${tot}?`,
-        antwoord:String(ans), opties:numOpties(ans,[per]), hint:groupsK(n,per,k,Y)+stapjes([`${tot} : ${n} = ${per}`,`${k} × ${per} = ${ans}`]),
-        uitleg:`${tot} : ${n} = ${per}, en ${k} × ${per} = ${ans}`};
-    }
-    if(soort==='gelijk'){
-      const [a,b]=pick([[1,2],[1,3],[1,4],[3,4],[2,3],[2,5]]);
-      const m=pick([2,3,4].filter(x=>b*x<=12)), A=a*m, N=b*m;
-      return {vraag:`Welke breuk is even groot als ${frac(a,b)}?`, story:true, spreek:`Welke breuk is even groot als ${fracWoord(a,b)}?`,
-        antwoord:`${A}/${N}`, opties:fracOpties([A,N], shuffle([[a,N],[A+1,N],[A-1,N],[a+1,b+1],[A,N+1]])),
-        hint:pie(b,a,Y,120)+pie(N,A,B,120)+stapjes([`Snijd elk stuk in ${m} kleinere stukjes.`]),
-        uitleg:`${frac(a,b)} = ${frac(A,N)}`, uitlegSpreek:`${fracWoord(a,b)} is even veel als ${fracWoord(A,N)}.`};
-    }
-    if(soort==='groter' || soort==='groter3'){
-      let g,k;
-      if(soort==='groter3' && kans(.5)){ const n=pick([5,6,8,10]); const x=rnd(1,n-1); let y; do{ y=rnd(1,n-1); }while(y===x); g=[Math.max(x,y),n]; k=[Math.min(x,y),n]; }
-      else [g,k]=pick(soort==='groter'
-        ? [[[1,2],[1,4]],[[1,2],[1,3]],[[3,4],[1,4]],[[2,3],[1,3]],[[1,3],[1,4]],[[3,4],[1,2]]]
-        : [[[3,4],[1,2]],[[2,3],[1,4]],[[1,3],[1,5]],[[1,2],[1,6]],[[5,6],[1,2]],[[1,4],[1,8]]]);
+    const col='#DC9A0E';
+    if(L<=3){
+      const soort = L===1 ? 'pie' : pick(L===2 ? ['pie','van','van'] : ['pie','van','van','groter']);
+      if(soort==='pie'){
+        const n=pick(L===1?[2,3,4]:L===2?[2,3,4,6]:[3,4,6,8]), k=rnd(1,n-1);
+        const pool=[];
+        [2,3,4,6,8].forEach(d=>{ for(let i=1;i<d;i++) pool.push([i,d]); });
+        const val=k/n;
+        const zelfde = shuffle(pool.filter(([a,b])=>b===n && a!==k));
+        const ander = shuffle(pool.filter(([a,b])=>b!==n && Math.abs(a/b-val)>1e-9));
+        const kies = zelfde.slice(0,2).concat(ander).slice(0,3);
+        const opties = shuffle([[k,n],...kies]).map(([a,b])=>({key:`${a}/${b}`, html:frac(a,b)}));
+        return {vraag:pie(n,k,col,170)+'<div style="width:100%">Welk deel is gekleurd?</div>', visualQ:true,
+          spreek:'Welk deel van de pizza is gekleurd?', antwoord:`${k}/${n}`, opties,
+          hint:`<div style="width:100%;text-align:center;font-weight:700">Tel alle stukken: dat is het getal onder de streep. Tel de gekleurde stukken: dat is het getal erboven.</div>`,
+          uitleg:`${k} van de ${n} stukken = `+frac(k,n), uitlegSpreek:`${k} van de ${n} stukken. Dat is ${fracWoord(k,n)}.`};
+      }
+      if(soort==='van'){
+        const n=pick(L===2?[2,2,4]:[2,3,4]);
+        const per=rnd(1, L===2?5:8), tot=n*per;
+        const naam = n===2?'de helft':n===4?'een kwart':'een derde';
+        return {vraag:`Hoeveel is ${naam} van ${tot}?`, story:true, spreek:`Hoeveel is ${naam} van ${tot}?`,
+          antwoord:String(per), opties:numOpties(per), hint:groups(n,per,col),
+          uitleg:`${tot} verdelen in ${n} groepjes: ${per} in elk groepje`};
+      }
+      // groter
+      const paren=[[[1,2],[1,4]],[[1,2],[1,3]],[[3,4],[1,4]],[[2,3],[1,3]],[[1,3],[1,4]],[[3,4],[1,2]]];
+      const [g,k]=pick(paren);
       return {vraag:'Welk stuk pizza is groter?', story:true, spreek:'Welk stuk pizza is groter?',
         antwoord:`${g[0]}/${g[1]}`, opties:shuffle([g,k]).map(([a,b])=>({key:`${a}/${b}`,html:frac(a,b)})),
-        hint:pie(g[1],g[0],Y,120)+pie(k[1],k[0],B,120),
+        hint:pie(g[1],g[0],col,120)+pie(k[1],k[0],'#2B8FD6',120),
         uitleg:frac(g[0],g[1])+' is groter dan '+frac(k[0],k[1]), uitlegSpreek:`${fracWoord(g[0],g[1])} is groter dan ${fracWoord(k[0],k[1])}.`};
     }
-    // samen: breuken optellen met dezelfde noemer
-    const n=pick([4,5,6,8]), k1=rnd(1,n-2), k2=rnd(1,n-1-k1), s=k1+k2;
-    return {vraag:`${frac(k1,n)} + ${frac(k2,n)} = ?`, spreek:`Hoeveel is ${fracWoord(k1,n)} plus ${fracWoord(k2,n)}?`,
-      antwoord:`${s}/${n}`, opties:fracOpties([s,n], [...shuffle([[s,n+n],[s+1,n],[s-1,n]]),[k1,n],[k2,n],[s,n+1]]),
-      hint:pie(n,k1,Y,150,k2)+stapjes(['Het getal onder de streep blijft hetzelfde.','Tel alleen de stukken op.']),
-      uitleg:`${frac(k1,n)} + ${frac(k2,n)} = ${frac(s,n)}`, uitlegSpreek:`${fracWoord(k1,n)} plus ${fracWoord(k2,n)} is ${fracWoord(s,n)}.`};
+    // Niveau 4-5: rekenen met breuken
+    const soort=pick(L===4?['som','min','keer','verg','van']:['som2','som','min','keer','verg','van']);
+    if(soort==='van'){
+      const n=pick([2,3,4,5,6,8]), per=rnd(2, L===4?8:12), tot=n*per;
+      const naam={2:'de helft',3:'een derde',4:'een kwart',5:'een vijfde',6:'een zesde',8:'een achtste'}[n];
+      return {vraag:`Hoeveel is ${naam} van ${tot}?`, story:true, spreek:`Hoeveel is ${naam} van ${tot}?`,
+        antwoord:String(per), opties:numOpties(per), hint:groups(n,per,col),
+        uitleg:`${tot} verdelen in ${n} groepjes: ${per} in elk groepje`};
+    }
+    if(soort==='som' || soort==='som2'){
+      let a,b,c,d;
+      if(soort==='som'){ d=pick([3,4,5,6,8]); b=d; a=rnd(1,d-2); c=rnd(1,d-a-1); if(c===a) c=c%(d-a-1)+1; }
+      else { [[a,b],[c,d]]=pick([[[1,2],[1,4]],[[1,2],[1,3]],[[1,3],[1,6]],[[1,2],[1,8]],[[3,4],[1,8]],[[2,3],[1,6]]]); }
+      const A=a*d+c*b, D=b*d;
+      const hint = (b===d)
+        ? `<div class="eq">${frac(a,b)} + ${frac(c,d)}</div><div style="width:100%;text-align:center;font-weight:700">De noemers zijn al gelijk: tel de tellers op!</div>`
+        : `<div class="eq">${frac(a*d,D)} + ${frac(c*b,D)}</div><div style="width:100%;text-align:center;font-weight:700">Maak eerst gelijknamig met noemer ${D}!</div>`;
+      return {vraag:`${frac(a,b)} + ${frac(c,d)} = ?`, spreek:`Hoeveel is ${fracWoord(a,b)} plus ${fracWoord(c,d)}?`,
+        antwoord:`${A}/${D}`, opties:fracOpties([[A,D],[a,b],[c,d],[A+1,D]]), hint,
+        uitleg:`${frac(a,b)} + ${frac(c,d)} = ${frac(A,D)}`,
+        uitlegSpreek:`${fracWoord(a,b)} plus ${fracWoord(c,d)} is ${fracWoord(A,D)}.`};
+    }
+    if(soort==='min'){
+      const n=pick([3,4,5,6,8]); const a=rnd(2,n-1); const b=rnd(1,a-1);
+      return {vraag:`${frac(a,n)} − ${frac(b,n)} = ?`, spreek:`Hoeveel is ${fracWoord(a,n)} min ${fracWoord(b,n)}?`,
+        antwoord:`${a-b}/${n}`, opties:fracOpties([[a-b,n],[a,n],[b,n],[a+b,n]]),
+        hint:`<div class="eq">${frac(a,n)} − ${frac(b,n)}</div><div style="width:100%;text-align:center;font-weight:700">Tel de tellers af, de noemer blijft ${n}.</div>`,
+        uitleg:`${frac(a,n)} − ${frac(b,n)} = ${frac(a-b,n)}`,
+        uitlegSpreek:`${fracWoord(a,n)} min ${fracWoord(b,n)} is ${fracWoord(a-b,n)}.`};
+    }
+    if(soort==='keer'){
+      const k=rnd(2, L===4?5:9), n=pick([2,3,4,5]), a=rnd(1,n-1), A=k*a;
+      return {vraag:`${k} × ${frac(a,n)} = ?`, spreek:`Hoeveel is ${k} keer ${fracWoord(a,n)}?`,
+        antwoord:`${A}/${n}`, opties:fracOpties([[A,n],[a,n],[A+1,n],[A-1,n]]),
+        hint:groups(k,a,col)+`<div style="width:100%;text-align:center;font-weight:700">${k} groepjes van ${frac(a,n)}: tel de tellers op.</div>`,
+        uitleg:`${k} × ${frac(a,n)} = ${frac(A,n)}`,
+        uitlegSpreek:`${k} keer ${fracWoord(a,n)} is ${fracWoord(A,n)}.`};
+    }
+    // verg: welke breuk is groter (ongelijke noemers)
+    const paren = L===4 ? [[[2,3],[3,4]],[[1,2],[2,5]],[[3,4],[4,5]],[[2,5],[1,2]],[[3,5],[1,2]],[[4,5],[3,4]]]
+                        : [[[5,6],[7,8]],[[3,5],[2,3]],[[4,5],[5,6]],[[7,8],[8,9]],[[2,3],[5,7]],[[5,7],[3,4]]];
+    const [[a,b],[c,d]]=pick(paren);
+    const g1=a*d, g2=c*b;
+    const groot = g1>g2 ? [a,b] : [c,d];
+    const klein = g1>g2 ? [c,d] : [a,b];
+    return {vraag:'Welke breuk is groter?', story:true, spreek:'Welke breuk is groter?',
+      antwoord:`${groot[0]}/${groot[1]}`, opties:fracOpties([[a,b],[c,d]]),
+      hint:pie(b,a,col,110)+pie(d,c,'#2B8FD6',110)+`<div style="width:100%;text-align:center;font-weight:700">Reken om naar noemer ${b*d}: ${frac(a*d,b*d)} en ${frac(c*b,b*d)}.</div>`,
+      uitleg:`${frac(groot[0],groot[1])} is groter dan ${frac(klein[0],klein[1])}`,
+      uitlegSpreek:`${fracWoord(groot[0],groot[1])} is groter dan ${fracWoord(klein[0],klein[1])}.`};
+  },
+  decimalen(L){
+    const col='#0E9AA7';
+    const item=()=>pick(['snoepje','ijsje','pen','sticker','boekje','drankje']);
+    if(L<=2){
+      const unit=(L===2&&Math.random()<.5)?100:10;
+      const maxU=L===1?110:250;
+      let A=rnd(Math.floor(maxU*.4),maxU-15);
+      if(unit===10 && A%10===0) A+=rnd(1,9); // zorg dat niveau 1 echt een komma laat zien
+      const B=rnd(5,maxU-A);
+      const a=r2(A/unit), b=r2(B/unit), ans=r2((A+B)/unit);
+      return {vraag:`Een ${item()} kost €${fmtK(a)} en een ${item()} kost €${fmtK(b)}. Hoeveel kosten ze samen?`, story:true,
+        spreek:`Een ${item()} kost ${fmtK(a)} euro en een ${item()} kost ${fmtK(b)} euro. Hoeveel kosten ze samen?`,
+        antwoord:String(ans), opties:numOpties(ans,fmtK,true),
+        hint:`<div class="eq">€${fmtK(a)} + €${fmtK(b)}</div><div style="width:100%;text-align:center;font-weight:700">Tel de centen bij elkaar op, tel daarna de euro's.</div>`,
+        uitleg:`€${fmtK(a)} + €${fmtK(b)} = €${fmtK(ans)}`};
+    }
+    if(L===3){
+      const kind=pick(['som','min','keer10','deel10']);
+      if(kind==='keer10'){
+        const A=rnd(3,99), a=r2(A/10), ans=r2(a*10);
+        return {vraag:`${fmtK(a)} × 10 = ?`, spreek:`Hoeveel is ${fmtK(a)} keer 10?`, antwoord:String(ans), opties:numOpties(ans,fmtK,true),
+          hint:`<div class="eq">${fmtK(a)} × 10</div><div style="width:100%;text-align:center;font-weight:700">De komma schuift één plek naar rechts!</div>`,
+          uitleg:`${fmtK(a)} × 10 = ${fmtK(ans)}`};
+      }
+      if(kind==='deel10'){
+        const A=rnd(10,250), a=r2(A/10), ans=r2(a/10);
+        return {vraag:`${fmtK(a)} : 10 = ?`, spreek:`Hoeveel is ${fmtK(a)} gedeeld door 10?`, antwoord:String(ans), opties:numOpties(ans,fmtK,true),
+          hint:`<div class="eq">${fmtK(a)} : 10</div><div style="width:100%;text-align:center;font-weight:700">De komma schuift één plek naar links!</div>`,
+          uitleg:`${fmtK(a)} : 10 = ${fmtK(ans)}`};
+      }
+      const unit=Math.random()<.5?100:10, maxU=400;
+      const A=rnd(Math.floor(maxU*.4),maxU-5), B= kind==='min'? rnd(5,A-1) : rnd(5,maxU-A);
+      const a=r2(A/unit), b=r2(B/unit), ans=r2(kind==='min'?(A-B)/unit:(A+B)/unit);
+      if(kind==='min'){
+        return {vraag:`Je hebt €${fmtK(a)}. Je koopt een ${item()} van €${fmtK(b)}. Hoeveel houd je over?`, story:true,
+          spreek:`Je hebt ${fmtK(a)} euro. Je koopt een ${item()} van ${fmtK(b)} euro. Hoeveel houd je over?`,
+          antwoord:String(ans), opties:numOpties(ans,fmtK,true),
+          hint:`<div class="eq">€${fmtK(a)} − €${fmtK(b)}</div><div style="width:100%;text-align:center;font-weight:700">Reken de centen af, daarna de euro's (leen als het moet).</div>`,
+          uitleg:`€${fmtK(a)} − €${fmtK(b)} = €${fmtK(ans)}`};
+      }
+      return {vraag:`${fmtK(a)} + ${fmtK(b)} = ?`, spreek:`Hoeveel is ${fmtK(a)} plus ${fmtK(b)}?`, antwoord:String(ans), opties:numOpties(ans,fmtK,true),
+        hint:`<div class="eq">${fmtK(a)} + ${fmtK(b)}</div><div style="width:100%;text-align:center;font-weight:700">Zet de komma's onder elkaar.</div>`,
+        uitleg:`${fmtK(a)} + ${fmtK(b)} = ${fmtK(ans)}`};
+    }
+    if(L===4){
+      if(Math.random()<.5){
+        const y=rnd(150,900), b=r2(y/100), ans=r2((1000-y)/100);
+        return {vraag:`Je koopt een ${item()} van €${fmtK(b)} en betaalt met €10. Hoeveel wisselgeld krijg je?`, story:true,
+          spreek:`Je koopt een ${item()} van ${fmtK(b)} euro en betaalt met 10 euro. Hoeveel wisselgeld krijg je?`,
+          antwoord:String(ans), opties:numOpties(ans,fmtK,true),
+          hint:`<div class="eq">€10,00 − €${fmtK(b)}</div><div style="width:100%;text-align:center;font-weight:700">Leen een euro als de centen niet lukken.</div>`,
+          uitleg:`€10,00 − €${fmtK(b)} = €${fmtK(ans)}`};
+      }
+      const A=rnd(500,4000), B=rnd(100,5000-A), a=r2(A/100), b=r2(B/100), ans=r2((A+B)/100);
+      return {vraag:`Een ${item()} kost €${fmtK(a)} en een ${item()} kost €${fmtK(b)}. Hoeveel kost dat samen?`, story:true,
+        spreek:`Een ${item()} kost ${fmtK(a)} euro en een ${item()} kost ${fmtK(b)} euro. Hoeveel kost dat samen?`,
+        antwoord:String(ans), opties:numOpties(ans,fmtK,true),
+        hint:`<div class="eq">€${fmtK(a)} + €${fmtK(b)}</div><div style="width:100%;text-align:center;font-weight:700">Honderden centen = euro's. Tel ze op!</div>`,
+        uitleg:`€${fmtK(a)} + €${fmtK(b)} = €${fmtK(ans)}`};
+    }
+    // L5
+    const kind=pick(['keerHeel','keerKomma','deelHeel']);
+    if(kind==='keerHeel'){
+      const A=rnd(11,99), a=r2(A/10), k=rnd(2,9), ans=r2(a*k);
+      return {vraag:`Een ${item()} kost €${fmtK(a)}. Je koopt er ${k}. Hoeveel betaal je?`, story:true,
+        spreek:`Een ${item()} kost ${fmtK(a)} euro. Je koopt er ${k}. Hoeveel betaal je?`,
+        antwoord:String(ans), opties:numOpties(ans,fmtK,true),
+        hint:`<div class="eq">€${fmtK(a)} × ${k}</div><div style="width:100%;text-align:center;font-weight:700">Reken eerst de euro's × ${k}, dan de centen × ${k}, tel op.</div>`,
+        uitleg:`€${fmtK(a)} × ${k} = €${fmtK(ans)}`};
+    }
+    if(kind==='keerKomma'){
+      const A=rnd(2,9), B=rnd(2,9), a=r2(A/10), b=r2(B/10), ans=r2(a*b);
+      return {vraag:`${fmtK(a)} × ${fmtK(b)} = ?`, spreek:`Hoeveel is ${fmtK(a)} keer ${fmtK(b)}?`, antwoord:String(ans), opties:numOpties(ans,fmtK,true),
+        hint:`<div class="eq">${A} × ${B} = ${A*B}</div><div style="width:100%;text-align:center;font-weight:700">Er staan 1 + 1 = 2 cijfers achter de komma: zet er 2 neer.</div>`,
+        uitleg:`${fmtK(a)} × ${fmtK(b)} = ${fmtK(ans)}`};
+    }
+    const q=r2(rnd(11,99)/10), k=pick([2,5]), a=r2(q*k);
+    return {vraag:`${fmtK(a)} : ${k} = ?`, spreek:`Hoeveel is ${fmtK(a)} gedeeld door ${k}?`, antwoord:String(q), opties:numOpties(q,fmtK,true),
+      hint:`<div class="eq">${fmtK(a)} : ${k}</div><div style="width:100%;text-align:center;font-weight:700">Welk getal × ${k} is ${fmtK(a)}?</div>`,
+      uitleg:`${fmtK(a)} : ${k} = ${fmtK(q)}`};
+  },
+  procenten(L){
+    const col='#E2557A';
+    const xVoorP=(p,max)=>{ const st=100/gcd(p,100); return st*rnd(1, Math.max(1, Math.floor(max/st))); };
+    const pieP=p=>{ if(p%10===0) return pie(10, p/10, col, 130); if(p%25===0) return pie(4, p/25, col, 130); return ''; };
+    const hintP=(p,x,ans)=>{
+      const txt = p===100?`${x} (100% is alles)` : p===50?`${x} : 2 = ${ans}` : p===25?`${x} : 4 = ${ans}` : p===10?`${x} : 10 = ${ans}`
+        : p===75?`${x} : 2 + ${x} : 4 = ${ans}` : p===5?`${x} : 20 = ${ans}` : p===20?`${x} : 5 = ${ans}` : p===40?`${x} : 5 × 2 = ${ans}`
+        : p===80?`${x} : 10 × 8 = ${ans}` : p===30?`${x} : 10 × 3 = ${ans}` : p===60?`${x} : 10 × 6 = ${ans}` : p===90?`${x} − ${x} : 10 = ${ans}`
+        : p===70?`${x} − ${x} : 10 × 3 = ${ans}` : p===15?`${x} : 10 + ${x} : 20 = ${ans}` : `${x} : ${100/p} = ${ans}`;
+      return (pieP(p)||'')+`<div style="width:100%;text-align:center;font-weight:700">${p}% van ${x}: ${txt}</div>`;
+    };
+    const item=()=>pick(KLEDING);
+    if(L===1){
+      const p=pick([10,50,100]), x=xVoorP(p,120), ans=p*x/100;
+      return {vraag:`Hoeveel is ${p}% van ${x}?`, spreek:`Hoeveel is ${p} procent van ${x}?`, antwoord:String(ans), opties:numOpties(ans), hint:hintP(p,x,ans), uitleg:`${p}% van ${x} = ${ans}`};
+    }
+    if(L===2){
+      const p=pick([10,20,25,50,75]), x=xVoorP(p,300), pVan=p*x/100;
+      if(Math.random()<.5){
+        const ans=r2(x-pVan);
+        return {vraag:`Een ${item()} kost €${x}. Je krijgt ${p}% korting. Hoeveel betaal je?`, story:true,
+          spreek:`Een ${item()} kost ${x} euro. Je krijgt ${p} procent korting. Hoeveel betaal je?`,
+          antwoord:String(ans), opties:numOpties(ans), hint:hintP(p,x,pVan)+`<div class="eq">€${x} − €${pVan} = <b>€${fmtK(ans)}</b></div>`,
+          uitleg:`€${x} − ${p}% = €${fmtK(ans)}`};
+      }
+      return {vraag:`Hoeveel is ${p}% van ${x}?`, spreek:`Hoeveel is ${p} procent van ${x}?`, antwoord:String(pVan), opties:numOpties(pVan), hint:hintP(p,x,pVan), uitleg:`${p}% van ${x} = ${pVan}`};
+    }
+    if(L===3){
+      if(Math.random()<.45){
+        const [y,x]=pick([[1,2],[1,4],[3,4],[1,5],[2,5],[3,5],[4,5],[1,10],[3,10],[7,10],[9,10],[2,4],[6,10],[8,10]]);
+        const p=y*100/x;
+        return {vraag:`Van de ${x} sommen waren er ${y} goed. Hoeveel procent is dat?`, story:true,
+          spreek:`Van de ${x} sommen waren er ${y} goed. Hoeveel procent is dat?`,
+          antwoord:String(p), opties:numOpties(p, v=>v+'%'),
+          hint:`<div class="eq">${y} : ${x} = ${r2(y/x)} → × 100</div><div style="width:100%;text-align:center;font-weight:700">Deel goed door totaal, doe dan × 100.</div>`,
+          uitleg:`${y} : ${x} × 100 = ${p}%`};
+      }
+      const p=pick([5,15,30,40,60,70,80,90]), x=xVoorP(p,400), ans=p*x/100;
+      return {vraag:`Hoeveel is ${p}% van ${x}?`, spreek:`Hoeveel is ${p} procent van ${x}?`, antwoord:String(ans), opties:numOpties(ans), hint:hintP(p,x,ans), uitleg:`${p}% van ${x} = ${ans}`};
+    }
+    if(L===4){
+      const p=pick([10,20,25,50]), x=xVoorP(p,300), pVan=p*x/100;
+      if(Math.random()<.5){
+        const ans=x+pVan;
+        return {vraag:`Een ${item()} kost €${x}. Daar komt ${p}% btw bij. Hoeveel kost het in totaal?`, story:true,
+          spreek:`Een ${item()} kost ${x} euro. Daar komt ${p} procent btw bij. Hoeveel kost het in totaal?`,
+          antwoord:String(ans), opties:numOpties(ans), hint:hintP(p,x,pVan)+`<div class="eq">€${x} + €${pVan} = <b>€${ans}</b></div>`,
+          uitleg:`€${x} + ${p}% btw = €${ans}`};
+      }
+      const k=pick([-5,-2,2,5]), ans=Math.max(0, x-pVan+k);
+      return {vraag:`Een ${item()} kost €${x} met ${p}% korting. Daar ${k<0?`krijg je nog €${-k} korting` : `komt €${k} bij`} op. Hoeveel betaal je?`, story:true,
+        spreek:`Een ${item()} kost ${x} euro met ${p} procent korting. Daar ${k<0?`krijg je nog ${-k} euro korting` : `komt ${k} euro bij`} op. Hoeveel betaal je?`,
+        antwoord:String(ans), opties:numOpties(ans), hint:hintP(p,x,pVan)+`<div class="eq">€${x} − €${pVan} ${k<0?'−':'+'} €${Math.abs(k)}</div>`,
+        uitleg:`€${x} − ${p}% ${k<0?'−':'+'} €${Math.abs(k)} = €${fmtK(ans)}`};
+    }
+    // L5
+    const soort=pick(['omgekeerd','opneer','dubbel']);
+    if(soort==='omgekeerd'){
+      const p=pick([10,20,25,50]), old=xVoorP(p,300), y=r2(old*(100-p)/100);
+      return {vraag:`Na ${p}% korting kost een ${item()} €${fmtK(y)}. Wat was de oude prijs?`, story:true,
+        spreek:`Na ${p} procent korting kost een ${item()} ${fmtK(y)} euro. Wat was de oude prijs?`,
+        antwoord:String(old), opties:numOpties(old),
+        hint:`<div class="eq">€${fmtK(y)} : ${r2((100-p)/100)} = €${old}</div><div style="width:100%;text-align:center;font-weight:700">Na ${p}% korting betaal je ${100-p}%. Deel dáárdoor!</div>`,
+        uitleg:`€${fmtK(y)} is ${100-p}% van €${old}`};
+    }
+    if(soort==='opneer'){
+      const p=pick([10,20,30,50]), ans=r2(100*(1+p/100)*(1-p/100));
+      return {vraag:`Een ${item()} kost €100. Eerst wordt hij ${p}% duurder, daarna ${p}% goedkoper. Wat kost hij nu?`, story:true,
+        spreek:`Een ${item()} kost 100 euro. Eerst wordt hij ${p} procent duurder, daarna ${p} procent goedkoper. Wat kost hij nu?`,
+        antwoord:String(ans), opties:numOpties(ans),
+        hint:`<div class="eq">€100 × ${r2(1+p/100)} = €${r2(100*(1+p/100))}</div><div class="eq">dat × ${r2(1-p/100)} = <b>€${fmtK(ans)}</b></div>`,
+        uitleg:`€100 + ${p}% = €${r2(100*(1+p/100))}, daarna − ${p}% = €${fmtK(ans)} (geen €100!)`};
+    }
+    const p=pick([10,20,25,50]), base=400, ans=p*p*base/10000;
+    return {vraag:`Hoeveel is ${p}% van ${p}% van ${base}?`, spreek:`Hoeveel is ${p} procent van ${p} procent van ${base}?`,
+      antwoord:String(ans), opties:numOpties(ans),
+      hint:`<div class="eq">${p}% van ${base} = ${p*base/100}</div><div class="eq">Daar dan weer ${p}% van</div>`,
+      uitleg:`${p}% van ${p}% van ${base} = ${ans}`};
+  },
+  klok(L){
+    const col='#5B6EE1';
+    if(L<=3){
+      const h=rnd(1,12);
+      const m= L===1?0 : L===2? pick([0,30]) : pick([0,5,10,15,20,25,30,35,40,45,50,55]);
+      return {vraag: klokSVG(h,m,190)+'<div style="width:100%">Hoe laat is het?</div>', visualQ:true,
+        spreek:'Hoe laat is het op de klok?',
+        antwoord:fmtT(h,m), opties:tijdOpties(h,m),
+        hint:`<div style="width:100%;text-align:center;font-weight:700">Korte wijzer = uur, lange wijzer = minuten. Het is <b>${fmtT(h,m)}</b>.</div>`,
+        uitleg:`Het is ${fmtT(h,m)}`};
+    }
+    const sH=rnd(8,15), sM=pick([0,5,10,15,20,25,30,35,40,45,50,55]);
+    const dur=pick(L===4?[30,45,60,75,90,105,120]:[45,60,75,90,120,150,180,210,240]);
+    const eTot=sH*60+sM+dur, eH=Math.floor(eTot/60), eM=eTot%60;
+    if(L===4 || Math.random()<.5){
+      if(Math.random()<.5){
+        return {vraag:`Een film begint om ${fmtT24(sH,sM)} en is om ${fmtT24(eH,eM)} afgelopen. Hoelang duurt de film?`, story:true,
+          spreek:`Een film begint om ${fmtT24(sH,sM)} en is om ${fmtT24(eH,eM)} afgelopen. Hoelang duurt de film?`,
+          antwoord:String(dur), opties:duurOpties(dur),
+          hint:`<div class="eq">${fmtT24(eH,eM)} − ${fmtT24(sH,sM)} = <b>${duurFmt(dur)}</b></div>`,
+          uitleg:`Van ${fmtT24(sH,sM)} tot ${fmtT24(eH,eM)} is ${duurFmt(dur)}`};
+      }
+      return {vraag:`Je begint om ${fmtT24(sH,sM)} met knutselen en doet er ${duurFmt(dur)} over. Hoe laat ben je klaar?`, story:true,
+        spreek:`Je begint om ${fmtT24(sH,sM)}. Je doet er ${duurFmt(dur)} over. Hoe laat ben je klaar?`,
+        antwoord:fmtT24(eH,eM), opties:tijdOpties24(eH,eM),
+        hint:`<div class="eq">${fmtT24(sH,sM)} + ${duurFmt(dur)} = <b>${fmtT24(eH,eM)}</b></div>`,
+        uitleg:`${fmtT24(sH,sM)} + ${duurFmt(dur)} = ${fmtT24(eH,eM)}`};
+    }
+    const eH2=rnd(13,20), eM2=pick([0,15,30,45]);
+    const tot2=eH2*60+eM2-dur, sH2=Math.floor(tot2/60), sM2=tot2%60;
+    return {vraag:`Om ${fmtT24(eH2,eM2)} ben je thuis. Dat is ${duurFmt(dur)} nadat je wegging. Hoe laat ging je weg?`, story:true,
+      spreek:`Om ${fmtT24(eH2,eM2)} ben je thuis. Dat is ${duurFmt(dur)} nadat je wegging. Hoe laat ging je weg?`,
+      antwoord:fmtT24(sH2,sM2), opties:tijdOpties24(sH2,sM2),
+      hint:`<div class="eq">${fmtT24(eH2,eM2)} − ${duurFmt(dur)} = <b>${fmtT24(sH2,sM2)}</b></div>`,
+      uitleg:`${fmtT24(eH2,eM2)} − ${duurFmt(dur)} = ${fmtT24(sH2,sM2)}`};
+  },
+  reeksen(L){
+    const col='#E07B39';
+    if(L>=4 && Math.random()<.35){
+      // kwadraten: 1, 4, 9, 16, ...
+      const s=rnd(1,4), terms=[]; for(let i=0;i<4;i++) terms.push((s+i)*(s+i));
+      const ans=(s+4)*(s+4);
+      return {vraag: chipRow([...terms,null])+'<div style="width:100%">Welk getal komt verder?</div>', visualQ:true,
+        spreek:'Welk getal komt verder in de reeks?',
+        antwoord:String(ans), opties:numOpties(ans),
+        hint:chipRow([...terms,ans])+`<div style="width:100%;text-align:center;font-weight:700">Kijk: ${terms[0]} = 1×1, ${terms[1]} = 2×2, ${terms[2]} = 3×3, ${terms[3]} = 4×4...</div>`,
+        uitleg:`kwadraten: na ${terms[3]} komt ${ans}`};
+    }
+    if(L>=4 && Math.random()<.5){
+      // vraagteken in het midden
+      const d=pick(L===4?[2,3,4,5]:[3,4,5,6]), start=rnd(1,10), idx=pick([1,2,3]);
+      const full=Array.from({length:5},(_,i)=>start+i*d);
+      const terms=full.map((v,i)=>i===idx?null:v), ans=full[idx];
+      return {vraag: chipRow(terms)+'<div style="width:100%">Welk getal staat op het vraagteken?</div>', visualQ:true,
+        spreek:'Welk getal staat op het vraagteken?',
+        antwoord:String(ans), opties:numOpties(ans),
+        hint:chipRow(full)+`<div style="width:100%;text-align:center;font-weight:700">Telkens +${d}</div>`,
+        uitleg:`Telkens +${d}: ${full.join(', ')}`};
+    }
+    if(L===5 && Math.random()<.4){
+      // fibonacci-achtig
+      const terms=[1,1]; while(terms.length<6) terms.push(terms[terms.length-1]+terms[terms.length-2]);
+      const ans=terms[5]+terms[4];
+      return {vraag: chipRow([...terms.slice(0,5),null])+'<div style="width:100%">Welk getal komt verder?</div>', visualQ:true,
+        spreek:'Welk getal komt verder in de reeks?',
+        antwoord:String(ans), opties:numOpties(ans),
+        hint:chipRow([...terms.slice(0,5),ans])+`<div style="width:100%;text-align:center;font-weight:700">Telkens de twee vorige getallen bij elkaar op!</div>`,
+        uitleg:`1+1=2, 1+2=3, 2+3=5, 3+5=8, 5+8=${ans}`};
+    }
+    if(L===5 && Math.random()<.4){
+      // welk getal hoort er niet bij
+      const d=pick([2,3,4,5]), start=rnd(2,10), idx=rnd(0,4);
+      const full=Array.from({length:5},(_,i)=>start+i*d);
+      let fout=full[idx]+d;
+      while(fout<=0 || full.includes(fout)) fout++;
+      const terms=full.map((v,i)=>i===idx?fout:v);
+      const others=shuffle(full.filter((v,i)=>i!==idx)).slice(0,3);
+      return {vraag: chipRow(terms)+'<div style="width:100%">Welk getal hoort NIET in de reeks?</div>', visualQ:true,
+        spreek:'Welk getal hoort niet in de reeks?',
+        antwoord:String(fout), opties:shuffle([fout,...others]).map(v=>({key:String(v),html:String(v)})),
+        hint:chipRow(full)+`<div style="width:100%;text-align:center;font-weight:700">De regel is +${d}, maar ${fout} breekt de regel.</div>`,
+        uitleg:`${fout} hoort er niet bij`};
+    }
+    // standaard: welk getal komt verder
+    let rule, start, len, terms;
+    for(let tries=0; tries<8; tries++){
+      if(L===1){ rule={op:'+',d:pick([2,3,5])}; start=rnd(1,8); len=4; }
+      else if(L===2){ rule=pick([{op:'+',d:pick([4,6,7])},{op:'×',d:2},{op:'−',d:pick([2,3])}]); start= rule.op==='×'? rnd(2,4) : rnd(3,15); len=4; }
+      else { rule=pick([{op:'+',d:rnd(3,9)},{op:'−',d:rnd(2,6)},{op:'×',d:pick([2,3])}]); start= rule.op==='×'? rnd(2,4) : rnd(5,25); len= rule.op==='×'?4:5; }
+      terms=[]; let v=start;
+      for(let i=0;i<=len;i++){ terms.push(v); v = rule.op==='+'? v+rule.d : rule.op==='−'? v-rule.d : v*rule.d; }
+      if(terms.every(t=>t>0 && t<=2000)) break;
+    }
+    const shown=terms.slice(0,terms.length-1), ans=terms[terms.length-1];
+    const rl = rule.op==='+'?`Telkens +${rule.d}`:rule.op==='−'?`Telkens −${rule.d}`:`Telkens ×${rule.d}`;
+    return {vraag: chipRow([...shown,null])+'<div style="width:100%">Welk getal komt verder?</div>', visualQ:true,
+      spreek:'Welk getal komt verder in de reeks?',
+      antwoord:String(ans), opties:numOpties(ans),
+      hint:chipRow([...shown,ans])+`<div style="width:100%;text-align:center;font-weight:700">${rl}</div>`,
+      uitleg:`${rl}: ${terms.join(', ')}`};
   },
 };
 
@@ -886,35 +1162,28 @@ function renderHome(){
     <article class="theme" style="--c:${t.c}">
       <div class="sym" aria-hidden="true">${t.teken}</div>
       <h3>${t.naam}</h3>
-      <div class="lvls" role="group" aria-label="Kies een niveau">${[1,2,3].map(i=>{ const open=i<=maxLvl(t.id), on=i===S.niveau[t.id];
-        return `<button class="lv${on?' on':''}" data-lvl="${t.id}:${i}" ${open?'':'disabled'} aria-pressed="${on}" aria-label="Niveau ${i}${open?'':', nog op slot'}">${open?i:LOCK}</button>`; }).join('')}</div>
-      <div class="lvl-info">${NIVEAU_INFO[t.id][S.niveau[t.id]-1]}</div>
+      <div class="lvl" aria-label="Niveau ${S.niveau[t.id]} van ${MAXLVL}">${[...Array(MAXLVL).keys()].map(i=>STAR(i<S.niveau[t.id])).join('')}<span>&nbsp;niveau ${S.niveau[t.id]}</span></div>
       <div class="acts">
         <button class="btn ghost" data-uitleg="${t.id}">Uitleg</button>
         <button class="btn" style="--c:${t.c}" data-oefen="${t.id}">Oefenen</button>
       </div>
     </article>`).join('');
-  $('#stats').innerHTML = '<tr><th>Thema</th><th>Niveau</th><th>Open t/m</th><th>Gelijk goed</th><th>Gemaakt</th><th>%</th></tr>' +
-    THEMAS.map(t => { const s=S.stats[t.id]; return `<tr><td>${t.naam}</td><td>${S.niveau[t.id]}</td><td>${maxLvl(t.id)}</td><td>${s.goed}</td><td>${s.totaal}</td><td>${s.totaal?Math.round(s.goed/s.totaal*100)+'%':'–'}</td></tr>`; }).join('');
-  $('#alles-open').checked = !!S.open;
+  $('#stats').innerHTML = '<tr><th>Thema</th><th>Niveau</th><th>Gelijk goed</th><th>Gemaakt</th><th>%</th></tr>' +
+    THEMAS.map(t => { const s=S.stats[t.id]; return `<tr><td>${t.naam}</td><td>${S.niveau[t.id]}</td><td>${s.goed}</td><td>${s.totaal}</td><td>${s.totaal?Math.round(s.goed/s.totaal*100)+'%':'–'}</td></tr>`; }).join('');
   updateTop();
 }
 
 /* Uitleg */
 let uit = {thema:null, stap:0};
-const uitlegStappen = id => UITLEG[id].filter(s => (s.lvl||1) <= maxLvl(id));
-function startUitleg(id, vanLvl=0){
-  const i = vanLvl ? uitlegStappen(id).findIndex(s => (s.lvl||1)===vanLvl) : 0;
-  uit={thema:id, stap:Math.max(0,i)}; renderUitleg(); toon('uitleg');
-}
+function startUitleg(id){ uit={thema:id, stap:0}; renderUitleg(); toon('uitleg'); }
 function renderUitleg(){
-  const t=T(uit.thema), stappen=uitlegStappen(uit.thema), st=stappen[uit.stap], laatste = uit.stap===stappen.length-1;
+  const t=T(uit.thema), stappen=UITLEG[uit.thema](S.niveau[uit.thema]), st=stappen[uit.stap], laatste = uit.stap===stappen.length-1;
   const p=$('#uitleg'); p.style.setProperty('--c', t.c);
   p.innerHTML = `
     <div class="bar"><button class="back" data-home>← Stoppen</button><span class="spacer"></span><span class="tag"><i>${t.teken}</i>Uitleg ${t.naam.toLowerCase()}</span></div>
     <div class="step-head">
       <button class="speak" id="lees" aria-label="Lees voor">${SPEAKER}</button>
-      <div>${(st.lvl||1)>1?`<span class="badge">Nieuw op niveau ${st.lvl}</span>`:''}<h2>${st.t}</h2><p class="step-text">${st.x}</p></div>
+      <div><h2>${st.t}</h2><p class="step-text">${st.x}</p></div>
     </div>
     <div class="visual">${st.v()}</div>
     <div class="stepper">
@@ -922,7 +1191,7 @@ function renderUitleg(){
       <div class="pips">${stappen.map((_,i)=>`<span class="pip${i<=uit.stap?' on':''}"></span>`).join('')}</div>
       ${laatste ? `<button class="btn" style="--c:${t.c}" data-oefen="${t.id}">Ga oefenen!</button>` : `<button class="btn" style="--c:${t.c}" id="volgende">Volgende →</button>`}
     </div>`;
-  $('#lees').onclick = () => spreek(zeg(st.t+'. '+st.x));
+  $('#lees').onclick = () => spreek(st.t+'. '+st.x);
   $('#vorige').onclick = () => { uit.stap--; renderUitleg(); };
   if(!laatste) $('#volgende').onclick = () => { uit.stap++; renderUitleg(); };
 }
@@ -932,35 +1201,12 @@ const AANTAL = 10;
 const GOED = ['Super!','Goed zo!','Knap gedaan!','Helemaal goed!','Top!','Wauw!'];
 let ses = null;
 function startOefenen(id){
-  ses = {thema:id, L:S.niveau[id], i:0, goed:0, punten:0, reeks:0, uitslag:[], q:null, pog:0, klaar:false, gezien:new Set()};
+  ses = {thema:id, i:0, goed:0, punten:0, reeks:0, uitslag:[], q:null, pog:0, klaar:false};
   volgende(); toon('oefen');
-}
-/* Elke som krijgt een sleutel. Woorden uit verhaaltjes tellen niet mee,
-   zodat "6 + 3" met knikkers en met appels als dezelfde som geldt. */
-const somKey = q => (q.vraag+'|'+q.antwoord)
-  .replace(/ballonnen|stickers|knikkers|appels|schelpen|kralen|snoepjes|doosjes|zakjes|vazen|bakjes|eieren|bloemen|aardbeien|elk doosje|elk zakje|elke vaas|elk bakje/g,'#');
-const ONTHOUD = 40; // zoveel recente sommen per thema en niveau worden overgeslagen
-function nieuweSom(){
-  const pk = ses.thema+'-'+ses.L;
-  const recent = new Set((S.recent && S.recent[pk]) || []);
-  let reserve = null;
-  for(let i=0;i<80;i++){
-    const q = GEN[ses.thema](ses.L), k = somKey(q);
-    if(ses.gezien.has(k)) continue;          // nooit twee keer in dezelfde ronde
-    if(!recent.has(k)) return {q,k};         // liefst ook niet in de vorige rondes
-    if(!reserve) reserve = {q,k};
-  }
-  if(reserve) return reserve;
-  const q = GEN[ses.thema](ses.L); return {q, k:somKey(q)};
 }
 function volgende(){
   if(ses.i >= AANTAL) return einde();
-  const {q,k} = nieuweSom(), pk = ses.thema+'-'+ses.L;
-  ses.q = q; ses.gezien.add(k);
-  S.recent = S.recent || {};
-  S.recent[pk] = [...(S.recent[pk]||[]).filter(x => x!==k), k].slice(-ONTHOUD);
-  bewaar();
-  ses.pog=0; ses.klaar=false;
+  ses.q = GEN[ses.thema](S.niveau[ses.thema]); ses.pog=0; ses.klaar=false;
   renderVraag();
 }
 function renderVraag(fb=''){
@@ -970,14 +1216,15 @@ function renderVraag(fb=''){
     <div class="bar">
       <button class="back" data-home>← Stoppen</button>
       <div class="progress" aria-label="Som ${ses.i+1} van ${AANTAL}">${Array.from({length:AANTAL},(_,i)=>`<span class="${ses.uitslag[i]||(i===ses.i?'now':'')}"></span>`).join('')}</div>
-      <span class="tag"><i>${t.teken}</i>Niveau ${ses.L}</span>
+      <span class="tag"><i>${t.teken}</i></span>
+      <span style="font-weight:800;color:var(--muted);font-size:.95rem">niveau ${S.niveau[ses.thema]}</span>
     </div>
     <div class="q">
       <button class="speak" id="lees" aria-label="Lees de som voor">${SPEAKER}</button>
       <div class="qtext${q.story||q.visualQ?' story':''}" ${q.visualQ?'style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px"':''}>${q.vraag}</div>
     </div>
     <div class="visual" id="hint" hidden>${q.hint}</div>
-    <div class="answers">${q.opties.map(o=>`<button class="ans${o.html.includes('rest')?' lang':''}" data-key="${o.key}">${o.html}</button>`).join('')}</div>
+    <div class="answers">${q.opties.map(o=>`<button class="ans" data-key="${o.key}">${o.html}</button>`).join('')}</div>
     <div id="fb">${fb}</div>`;
   $('#lees').onclick = () => spreek(q.spreek);
   p.querySelectorAll('.ans').forEach(b => b.onclick = () => kies(b));
@@ -991,7 +1238,7 @@ function kies(btn){
   if(key===q.antwoord){
     ses.klaar=true; btn.classList.add('good');
     document.querySelectorAll('.ans').forEach(b=>b.disabled=true);
-    const basis=PUNTEN[ses.L-1]; let pts = ses.pog===0 ? basis : Math.round(basis/2), extra='';
+    let pts = ses.pog===0 ? 10 : 5, extra='';
     if(ses.pog===0){ ses.goed++; st.goed++; ses.reeks++; ses.uitslag[ses.i]='ok'; } else { ses.reeks=0; ses.uitslag[ses.i]='half'; }
     if(ses.pog===0 && ses.reeks>0 && ses.reeks%5===0){ pts+=10; extra=` <b>Bonus: 5 op rij!</b>`; }
     ses.punten+=pts; puntenErbij(pts); piep(true);
@@ -1009,7 +1256,7 @@ function kies(btn){
       ses.klaar=true; ses.uitslag[ses.i]='no';
       document.querySelectorAll('.ans').forEach(b=>{ b.disabled=true; if(b.dataset.key===q.antwoord) b.classList.add('good'); });
       fbToon('show', `<strong>Het goede antwoord is groen.</strong>${uitlegHtml}`);
-      spreek('Kijk, dit is het goede antwoord. ' + (q.uitlegSpreek || zeg(q.uitleg)));
+      spreek('Kijk, dit is het goede antwoord. ' + (q.uitlegSpreek || q.uitleg.replace('−','min').replace(':','gedeeld door').replace('×','keer')));
     }
     bewaar();
   }
@@ -1028,13 +1275,8 @@ function confetti(){
 function einde(){
   const t=T(ses.thema), g=ses.goed;
   const sterren = g>=9?3:g>=6?2:g>=3?1:0;
-  let up='', nieuwLvl=0;
-  if(g>=8 && ses.L<3){
-    const nxt=ses.L+1;
-    if(S.max[ses.thema] < nxt){ S.max[ses.thema]=nxt; nieuwLvl=nxt; }
-    S.niveau[ses.thema]=nxt;
-    up = nieuwLvl ? `<div class="levelup">Niveau ${nxt} is open!</div><p>Bekijk eerst de nieuwe uitleg.</p>` : `<div class="levelup">Op naar niveau ${nxt}!</div>`;
-  }
+  let up='';
+  if(g>=8 && S.niveau[ses.thema]<MAXLVL){ S.niveau[ses.thema]++; up=`<div class="levelup">Je gaat naar niveau ${S.niveau[ses.thema]}!</div>`; }
   bewaar();
   const p=$('#klaar'); p.style.setProperty('--c', t.c);
   const titel = sterren===3?'Fantastisch!':sterren===2?'Goed gedaan!':sterren===1?'Lekker geoefend!':'Goed geprobeerd!';
@@ -1045,13 +1287,12 @@ function einde(){
     <div class="pill">${COIN}<span>+${ses.punten}</span></div>
     ${up}
     <div class="row">
-      ${nieuwLvl ? `<button class="btn" style="--c:${t.c}" data-uitleg="${t.id}" data-van-lvl="${nieuwLvl}">Nieuwe uitleg</button>` : ''}
-      <button class="btn ${nieuwLvl?'ghost':''}" style="--c:${t.c}" data-oefen="${t.id}">${up?'Verder oefenen':'Nog een keer'}</button>
+      <button class="btn" style="--c:${t.c}" data-oefen="${t.id}">Nog een keer</button>
       <button class="btn" style="--c:var(--gold);color:var(--ink)" data-winkel>Naar de winkel</button>
       <button class="btn ghost" data-home>Ander thema</button>
     </div>`;
   toon('klaar');
-  spreek(`${titel} Je hebt ${ses.punten} punten verdiend.${nieuwLvl?` Niveau ${nieuwLvl} is open!`:''}`);
+  spreek(`${titel} Je hebt ${ses.punten} punten verdiend.`);
 }
 
 /* Winkel */
@@ -1091,11 +1332,10 @@ function renderWinkel(){
 
 /* ---------- Klikken ---------- */
 document.addEventListener('click', e => {
-  const el = e.target.closest('[data-home],[data-uitleg],[data-oefen],[data-lvl],[data-winkel],[data-cat],[data-item],[data-huid],[data-haar]');
+  const el = e.target.closest('[data-home],[data-uitleg],[data-oefen],[data-winkel],[data-cat],[data-item],[data-huid],[data-haar]');
   if(!el) return;
   if(el.hasAttribute('data-home')){ renderHome(); toon('home'); }
-  else if(el.dataset.uitleg) startUitleg(el.dataset.uitleg, +(el.dataset.vanLvl||0));
-  else if(el.dataset.lvl){ const [id,l]=el.dataset.lvl.split(':'); S.niveau[id]=+l; bewaar(); renderHome(); }
+  else if(el.dataset.uitleg) startUitleg(el.dataset.uitleg);
   else if(el.dataset.oefen) startOefenen(el.dataset.oefen);
   else if(el.hasAttribute('data-winkel')){ pas=null; renderWinkel(); toon('winkel'); }
   else if(el.dataset.cat){ cat=el.dataset.cat; pas=null; renderWinkel(); }
@@ -1113,11 +1353,6 @@ function vraagReset(){
   $('#nee-reset').onclick = () => { $('#reset-row').innerHTML='<button class="btn ghost" id="reset">Alles opnieuw beginnen</button>'; $('#reset').onclick = vraagReset; };
 }
 $('#reset').onclick = vraagReset;
-$('#alles-open').onchange = e => {
-  S.open = e.target.checked;
-  if(!S.open) THEMAS.forEach(t => { S.niveau[t.id]=Math.min(S.niveau[t.id], S.max[t.id]); });
-  bewaar(); renderHome();
-};
 $('#coin-top').outerHTML = COIN;
 renderHome();
 laadStemmen();
